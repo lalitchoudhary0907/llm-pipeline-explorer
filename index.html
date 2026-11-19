@@ -1,0 +1,3435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LLM Pipeline Explorer — Visual Step-by-Step Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+    /* ==========================================================================
+       1. HIGH-CRAFT DESIGN SYSTEM (LINEAR & VERCEL INSPIRED)
+       ========================================================================== */
+    :root {
+      --bg-app: #09090B;
+      --bg-surface: #121215;
+      --bg-surface-elevated: #18181D;
+      --bg-surface-hover: #1E1E24;
+      --bg-input: #0D0D10;
+      --bg-input-focus: #141419;
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --border-active: rgba(255, 255, 255, 0.28);
+
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --text-dim: #52525B;
+
+      --accent-primary: #6366F1;
+      --accent-primary-subtle: rgba(99, 102, 241, 0.12);
+      --accent-emerald: #10B981;
+      --accent-emerald-subtle: rgba(16, 185, 129, 0.12);
+      --accent-amber: #F59E0B;
+      --accent-amber-subtle: rgba(245, 158, 11, 0.12);
+      --accent-indigo: #818CF8;
+      --accent-cyan: #38BDF8;
+
+      --glass-bg: rgba(18, 18, 22, 0.82);
+      --glass-bg-subtle: rgba(18, 18, 22, 0.65);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --glass-blur: blur(16px);
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+      --shadow-glass: 0 12px 36px rgba(0, 0, 0, 0.55);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-app);
+      background-image: radial-gradient(circle at 40% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+      overflow-x: hidden;
+    }
+
+    /* Minimal Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       2. TOP HEADER
+       ========================================================================== */
+    .app-header {
+      height: 56px;
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 40;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+    }
+
+    .app-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .app-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .version-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0;
+    }
+
+    .app-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Top Progress Stepper Pills */
+    .guided-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 3px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stepper-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tab-num {
+      width: 17px;
+      height: 17px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.16s;
+    }
+
+    .stepper-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stepper-tab.active {
+      background: #FAFAFA;
+      color: #09090B;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .stepper-tab.active .tab-num {
+      background: #09090B;
+      color: #FAFAFA;
+    }
+
+    .stepper-tab.completed:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .stepper-tab.completed:not(.active) .tab-num {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    .tab-divider {
+      width: 1px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* ==========================================================================
+       3. 2-COLUMN WORKSPACE
+       ========================================================================== */
+    .workspace-grid {
+      display: flex;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* LEFT GUIDED WORKSPACE */
+    .guided-workspace {
+      width: 46%;
+      max-width: 560px;
+      min-width: 380px;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 32px 32px 48px 32px;
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-app);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    /* Step Views (Only 1 active at a time!) */
+    .step-view {
+      display: none;
+      flex-direction: column;
+      gap: 22px;
+      animation: fadeInStep 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-view.active {
+      display: flex;
+    }
+
+    @keyframes fadeInStep {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Step Header */
+    .step-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-tag-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .step-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-indigo);
+      background: rgba(129, 140, 248, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.22);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+    }
+
+    .step-meta-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .step-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .step-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Card Panels inside Steps */
+    .guided-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* Presets Row */
+    .preset-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preset-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .preset-pill:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .preset-pill.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.22);
+      font-weight: 500;
+    }
+
+    /* Textarea & Inputs */
+    .guided-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .guided-textarea:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+      background: var(--bg-input-focus);
+    }
+
+    .guided-input {
+      width: 100%;
+      height: 46px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0 16px;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .guided-input:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+      background: var(--bg-input-focus);
+    }
+
+    /* Step Navigation Buttons */
+    .step-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .btn-step-primary {
+      background: #FAFAFA;
+      color: #09090B;
+      border: none;
+      border-radius: var(--radius-md);
+      height: 44px;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      margin-left: auto;
+    }
+
+    .btn-step-primary:hover {
+      background: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-step-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-step-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      height: 44px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-step-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    /* Stage 2: Word Dictionary Pills */
+    .vocab-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vocab-search-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .vocab-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .vocab-search-input {
+      width: 100%;
+      height: 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0 12px 0 34px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .vocab-search-input:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .vocab-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .special-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .special-toggle-label input[type="checkbox"] {
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .guided-vocab-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 2px 0;
+    }
+
+    .vocab-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 11px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      transition: all 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .vocab-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .vocab-pill.active {
+      background: var(--accent-primary-subtle);
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+    }
+
+    .vocab-pill.special-pill {
+      opacity: 0.65;
+      border-style: dashed;
+      color: var(--text-muted);
+    }
+
+    .vocab-pill.poly-pill {
+      border-color: rgba(245, 158, 11, 0.35);
+      background: rgba(245, 158, 11, 0.06);
+      color: #FDE68A;
+    }
+
+    .vocab-id-tag {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    /* Stage 3: Sentence Tokenizer Blocks */
+    .guided-sentences-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .sentence-block-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sentence-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .sentence-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .token-id-block {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .token-id-block .block-id {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    .token-id-block.polysemy-block {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+      color: #FDE68A;
+    }
+
+    /* Stage 4: Test Your Own Sentence */
+    .query-stream-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .query-stream-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .guided-query-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .query-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.14s;
+    }
+
+    .query-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .query-chip.active-token {
+      background: var(--accent-emerald-subtle);
+      border-color: var(--accent-emerald);
+      color: var(--text-primary);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+      font-weight: 600;
+    }
+
+    .query-chip.unk-chip {
+      background: var(--accent-amber-subtle);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: var(--accent-amber);
+    }
+
+    .query-hint {
+      font-size: 11.5px;
+      color: var(--text-dim);
+    }
+
+    /* Stage 5: Segmented Switch & Plain-English Explanation */
+    .guided-segmented-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+
+    .seg-choice {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .seg-choice-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .seg-choice-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .seg-choice:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .seg-choice.active {
+      background: var(--bg-surface-elevated);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .seg-choice.active .seg-choice-title {
+      color: var(--text-primary);
+    }
+
+    .seg-choice.active.active-contextual .seg-choice-title {
+      color: var(--accent-emerald);
+    }
+
+    .seg-choice.active.active-static .seg-choice-title {
+      color: var(--accent-indigo);
+    }
+
+    /* 1-Sentence Plain-English Explanation Banner */
+    .guided-explanation-banner {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+
+    .guided-explanation-banner.static-mode {
+      background: rgba(129, 140, 248, 0.08);
+      border-color: rgba(129, 140, 248, 0.22);
+    }
+
+    .explanation-icon {
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Self-Attention Influence Breakdown */
+    .guided-attention-panel {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .attn-header {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .attn-target-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--accent-emerald);
+      background: var(--accent-emerald-subtle);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .guided-attention-bars {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .attn-bar-row {
+      display: grid;
+      grid-template-columns: 85px 1fr 45px;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+    }
+
+    .attn-bar-word {
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .attn-bar-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .attn-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10B981, #34D399);
+      border-radius: var(--radius-full);
+      transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .attn-bar-pct {
+      color: var(--text-muted);
+      text-align: right;
+      font-size: 10.5px;
+    }
+
+    /* ==========================================================================
+       4. RIGHT COLUMN: 3D VECTOR SPACE CANVAS
+       ========================================================================== */
+    .viewport-column {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      background: var(--bg-app);
+      overflow: hidden;
+    }
+
+    .canvas-stage {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #vectorCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    #vectorCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Floating Glass HUD Elements on 3D Canvas */
+    .hud-floating-bar {
+      position: absolute;
+      z-index: 20;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-full);
+      padding: 4px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .hud-top-left {
+      top: 16px;
+      left: 16px;
+    }
+
+    .hud-pill-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .hud-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .hud-pill-btn.active {
+      color: var(--text-primary);
+    }
+
+    .hud-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--text-muted);
+      transition: background-color 0.2s;
+    }
+
+    .hud-status-dot.on {
+      background: var(--accent-emerald);
+      box-shadow: 0 0 6px var(--accent-emerald);
+    }
+
+    .hud-bar-divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0 2px;
+    }
+
+    .hud-pill-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hud-pill-check input[type="checkbox"] {
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    /* Bottom-Left Simple 2-Color Legend */
+    .canvas-legend {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      z-index: 20;
+      background: var(--glass-bg-subtle);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .dot-query {
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    .dot-vocab {
+      background: var(--accent-indigo);
+      opacity: 0.85;
+    }
+
+    .legend-line {
+      width: 14px;
+      height: 2px;
+      border-top: 2px dashed var(--accent-amber);
+    }
+
+    /* Bottom-Right Floating Inspector Card (ONLY visible when a node is clicked!) */
+    .inspector-hud {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      z-index: 25;
+      width: 250px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-glass);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: auto;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .inspector-hud.hidden {
+      display: none !important;
+    }
+
+    .hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .hud-token-title {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    #hudTokenName {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .hud-id-pill {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .hud-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+
+    .hud-close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    /* Plain-English Meaning Cluster Badge */
+    .hud-cluster-badge {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+    }
+
+    .hud-mode-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .hud-mode-badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+    }
+
+    .hud-mode-badge.hud-mode-contextual {
+      color: var(--accent-emerald);
+      background: var(--accent-emerald-subtle);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .hud-mode-badge.hud-mode-static {
+      color: var(--accent-indigo);
+      background: rgba(129, 140, 248, 0.1);
+      border: 1px solid rgba(129, 140, 248, 0.25);
+    }
+
+    /* 3D Coordinates */
+    .hud-coords {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 5px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .coord-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .coord-axis {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .coord-val {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
+
+    /* Nearest Neighbors */
+    .hud-neighbors-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hud-neighbors-title {
+      font-size: 9.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .neighbor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .neighbor-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .neighbor-sim {
+      font-size: 10.5px;
+      color: var(--accent-emerald);
+      background: var(--accent-emerald-subtle);
+      padding: 0 5px;
+      border-radius: 3px;
+    }
+
+    /* ==========================================================================
+       5. RESPONSIVENESS (DESKTOP, TABLET & MOBILE)
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .app-shell {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+      }
+
+      .app-header {
+        padding: 0 16px;
+      }
+
+      .app-subtitle {
+        display: none;
+      }
+
+      .workspace-grid {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+      }
+
+      .guided-workspace {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        padding: 24px 20px 32px 20px;
+        border-right: none;
+        order: 1;
+      }
+
+      .viewport-column {
+        height: 400px;
+        min-height: 380px;
+        border-top: 1px solid var(--border-subtle);
+        order: 2;
+      }
+
+      /* Make touch targets comfortable (min-height: 44px) */
+      .preset-pill, .btn-step-primary, .btn-step-secondary, .guided-input, .seg-choice {
+        min-height: 44px;
+      }
+
+      .inspector-hud {
+        bottom: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .guided-stepper .tab-name {
+        display: none;
+      }
+
+      .guided-stepper .stepper-tab {
+        padding: 6px 8px;
+      }
+
+      .canvas-legend {
+        display: none;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="app-title-group">
+          <div class="app-title">
+            <span>LLM Pipeline Explorer</span>
+            <span class="version-tag">Interactive Guide</span>
+          </div>
+          <span class="app-subtitle">Understand how an AI reads text, maps numbers, and creates 3D meaning</span>
+        </div>
+      </div>
+
+      <!-- 5-STEP GUIDED PROGRESS BAR -->
+      <nav class="guided-stepper" aria-label="Walkthrough Stepper">
+        <button type="button" class="stepper-tab active" data-step="1">
+          <span class="tab-num">1</span>
+          <span class="tab-name">Training</span>
+        </button>
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="2">
+          <span class="tab-num">2</span>
+          <span class="tab-name">Dictionary</span>
+        </button>
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="3">
+          <span class="tab-num">3</span>
+          <span class="tab-name">Tokens</span>
+        </button>
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="4">
+          <span class="tab-num">4</span>
+          <span class="tab-name">Test Sentence</span>
+        </button>
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="5">
+          <span class="tab-num">5</span>
+          <span class="tab-name">3D Meaning</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- 2-COLUMN WORKSPACE -->
+    <main class="workspace-grid">
+      <!-- LEFT GUIDED WALKTHROUGH PANEL -->
+      <section class="guided-workspace" id="guidedWorkspace" aria-label="5-Step Guided Walkthrough">
+        
+        <!-- ==================================================================
+             STEP 1: TRAINING SENTENCES
+             ================================================================== -->
+        <article class="step-view active" id="stepView-1">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 1 of 5 · Training</span>
+              <span class="step-meta-badge" id="corpusLineCount">4 Sentences</span>
+            </div>
+            <h1 class="step-title">Training Sentences</h1>
+            <p class="step-desc">An AI learns what words mean by reading examples.</p>
+          </div>
+
+          <div class="guided-card">
+            <div class="preset-group">
+              <span class="preset-label">Choose a beginner example topic:</span>
+              <div class="preset-pills" role="group" aria-label="Example Topics">
+                <button type="button" class="preset-pill active" data-preset="bank">Bank: River vs. Money</button>
+                <button type="button" class="preset-pill" data-preset="apple">Apple: Fruit vs. Tech</button>
+                <button type="button" class="preset-pill" data-preset="empty">Custom Empty</button>
+              </div>
+            </div>
+
+            <textarea
+              id="corpusInput"
+              class="guided-textarea"
+              rows="4"
+              spellcheck="false"
+              aria-label="Training corpus sentences"
+            >The river bank overflowed after heavy rain.
+I deposited money in the bank yesterday.
+Clear water flows down the river.
+She checked her account balance and money.</textarea>
+
+            <div class="step-actions">
+              <button type="button" id="buildPipelineBtn" class="btn-step-primary">
+                <span>Learn Words &amp; Continue →</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ==================================================================
+             STEP 2: WORD DICTIONARY (VOCABULARY)
+             ================================================================== -->
+        <article class="step-view" id="stepView-2">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 2 of 5 · Vocabulary</span>
+              <span class="step-meta-badge" id="vocabSizeBadge">26 Unique Words</span>
+            </div>
+            <h1 class="step-title">Word Dictionary</h1>
+            <p class="step-desc">Every unique word gets its own ID number.</p>
+          </div>
+
+          <div class="guided-card">
+            <div class="vocab-toolbar">
+              <div class="vocab-search-wrap">
+                <svg class="vocab-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  id="vocabSearchInput"
+                  class="vocab-search-input"
+                  placeholder="Filter dictionary words or #ID..."
+                  aria-label="Filter dictionary"
+                />
+              </div>
+
+              <div class="vocab-toggle-row">
+                <label class="special-toggle-label" title="Show [PAD], [UNK], [CLS], and [SEP] tokens">
+                  <input type="checkbox" id="showSpecialTokensToggle" />
+                  <span>Show Special Tokens ([PAD], [UNK], [CLS], [SEP])</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="vocabTableBody" class="guided-vocab-cloud">
+              <!-- Populated dynamically -->
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn2" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn2" class="btn-step-primary">
+                <span>See Tokenized Sentences →</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ==================================================================
+             STEP 3: SENTENCE TOKENIZER
+             ================================================================== -->
+        <article class="step-view" id="stepView-3">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 3 of 5 · Tokenization</span>
+              <span class="step-meta-badge" id="totalCorpusTokensBadge">27 Tokens</span>
+            </div>
+            <h1 class="step-title">Sentence Tokenizer</h1>
+            <p class="step-desc">Computers read numbers, not words. Here is how the AI converts your text into ID numbers.</p>
+          </div>
+
+          <div class="guided-card">
+            <div id="corpusTokensContainer" class="guided-sentences-list">
+              <!-- Populated dynamically -->
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn3" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn3" class="btn-step-primary">
+                <span>Test Your Own Sentence →</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ==================================================================
+             STEP 4: TEST YOUR OWN SENTENCE
+             ================================================================== -->
+        <article class="step-view" id="stepView-4">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 4 of 5 · Real-Time Query</span>
+              <span class="step-meta-badge" id="queryTokenCountBadge">9 Tokens</span>
+            </div>
+            <h1 class="step-title">Test Your Own Sentence</h1>
+            <p class="step-desc">Type any sentence to see how the model tokenizes it live and projects it into 3D space.</p>
+          </div>
+
+          <div class="guided-card">
+            <div class="preset-group">
+              <span class="preset-label">Quick meaning context:</span>
+              <div class="preset-pills" role="group" aria-label="Context Presets">
+                <button type="button" class="preset-pill active" id="ctxBtnA" data-ctx="A">Context A: River Bank</button>
+                <button type="button" class="preset-pill" id="ctxBtnB" data-ctx="B">Context B: Finance Bank</button>
+              </div>
+            </div>
+
+            <input
+              type="text"
+              id="querySentenceInput"
+              class="guided-input"
+              value="He sat by the river bank watching the water."
+              placeholder="Type any sentence to test..."
+              spellcheck="false"
+              aria-label="Test sentence input"
+            />
+
+            <div class="query-stream-card">
+              <div class="query-stream-header">
+                <span>Live Token Stream</span>
+                <span id="unkCounterLabel" style="color: var(--accent-amber); font-family: var(--font-mono); font-weight: 500;"></span>
+              </div>
+              <div id="queryTokensContainer" class="guided-query-chips">
+                <!-- Populated dynamically -->
+              </div>
+              <p class="query-hint">💡 Tip: Click any token chip to inspect its self-attention breakdown and 3D coordinates.</p>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn4" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn4" class="btn-step-primary">
+                <span>See 3D Meaning Shift →</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ==================================================================
+             STEP 5: STATIC VS. CONTEXTUAL IN 3D
+             ================================================================== -->
+        <article class="step-view" id="stepView-5">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 5 of 5 · 3D Vector Space</span>
+              <span class="step-meta-badge badge-contextual" id="embeddingModeBadge">Contextual (Context-Aware)</span>
+            </div>
+            <h1 class="step-title">Static vs. Contextual</h1>
+            <p class="step-desc">See how context changes a word's meaning in 3D space.</p>
+          </div>
+
+          <div class="guided-card">
+            <!-- Large Tactile Segmented Switch -->
+            <div class="guided-segmented-switch" role="group" aria-label="Embedding Mode Switch">
+              <button type="button" id="btnStaticMode" class="seg-choice">
+                <span class="seg-choice-title">
+                  <span>📦</span> Static Meaning
+                </span>
+                <span class="seg-choice-sub">Word2Vec (Frozen Lookup)</span>
+              </button>
+
+              <button type="button" id="btnContextualMode" class="seg-choice active active-contextual">
+                <span class="seg-choice-title">
+                  <span>✨</span> Context-Aware
+                </span>
+                <span class="seg-choice-sub">Transformer (Self-Attention)</span>
+              </button>
+            </div>
+
+            <!-- Plain-English 1-Sentence Explanation Banner -->
+            <div id="modeExplanationBanner" class="guided-explanation-banner contextual-mode">
+              <div class="explanation-icon">✨</div>
+              <div class="explanation-text">
+                <strong>Context-Aware (Self-Attention):</strong> The AI reads surrounding words (like <em>"river"</em> and <em>"water"</em>) and physically shifts <strong>"bank"</strong> into the Nature/Water cluster in 3D space!
+              </div>
+            </div>
+
+            <!-- Self-Attention Influence Breakdown -->
+            <div class="guided-attention-panel" id="attentionPanel">
+              <div class="attn-header">
+                <span>Self-Attention Influence Breakdown</span>
+                <span class="attn-target-badge" id="attnSelectedTokenBadge">Target: "bank" (#8)</span>
+              </div>
+              <div id="attentionBarsContainer" class="guided-attention-bars">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn5" class="btn-step-secondary">
+                <span>← Back to Test Sentence</span>
+              </button>
+              <button type="button" id="restartWalkthroughBtn" class="btn-step-primary">
+                <span>Restart Walkthrough ↺</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- RIGHT COLUMN: 3D VECTOR SPACE CANVAS -->
+      <section class="viewport-column" id="stage-6" aria-label="Interactive 3D Vector Space">
+        <div class="canvas-stage" id="canvasContainer">
+          <canvas id="vectorCanvas"></canvas>
+
+          <!-- Top-Left Floating Controls Bar -->
+          <div class="hud-floating-bar hud-top-left" role="toolbar" aria-label="Canvas Controls">
+            <button type="button" id="btnResetCamera" class="hud-pill-btn" title="Reset View Orbit">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span>Reset View</span>
+            </button>
+            <div class="hud-bar-divider"></div>
+            <button type="button" id="btnAutoRotate" class="hud-pill-btn active" title="Toggle Auto-Orbit Rotation">
+              <span class="hud-status-dot on"></span>
+              <span>Auto-Rotate: ON</span>
+            </button>
+            <div class="hud-bar-divider"></div>
+            <label class="hud-pill-check" title="Toggle displaying all word labels vs. smart zero-overlap labels">
+              <input type="checkbox" id="chkShowAllLabels" />
+              <span>Show All Labels</span>
+            </label>
+            <div class="hud-bar-divider"></div>
+            <label class="hud-pill-check" title="Toggle displacement trajectory arrows">
+              <input type="checkbox" id="chkShowShiftVectors" checked />
+              <span>Shift Vectors</span>
+            </label>
+          </div>
+
+          <!-- Bottom-Left Minimal 2-Color Legend -->
+          <div class="canvas-legend">
+            <div class="legend-item">
+              <span class="legend-dot dot-query"></span>
+              <span>Your Sentence</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot dot-vocab"></span>
+              <span>Vocabulary Word</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-line"></span>
+              <span>Attention Shift</span>
+            </div>
+          </div>
+
+          <!-- Bottom-Right Floating Inspector Card (ONLY visible when a node is clicked!) -->
+          <aside class="inspector-hud hidden" id="inspectorHud" aria-live="polite">
+            <div class="hud-header">
+              <div class="hud-token-title">
+                <span id="hudTokenName">"bank"</span>
+                <span class="hud-id-pill" id="hudTokenId">#8</span>
+              </div>
+              <button type="button" class="hud-close-btn" id="hudCloseBtn" title="Close inspector">✕</button>
+            </div>
+
+            <!-- Plain-English Meaning Cluster -->
+            <div class="hud-cluster-badge" id="hudClusterBadge">
+              🌿 Nature &amp; River (Water Flow) Cluster
+            </div>
+
+            <div class="hud-mode-row">
+              <span>Embedding Space:</span>
+              <span class="hud-mode-badge hud-mode-contextual" id="hudModeBadge">Contextual</span>
+            </div>
+
+            <!-- 3D Coordinates -->
+            <div class="hud-coords">
+              <div class="coord-box">
+                <span class="coord-axis">X</span>
+                <span class="coord-val" id="hudCoordX">0.000</span>
+              </div>
+              <div class="coord-box">
+                <span class="coord-axis">Y</span>
+                <span class="coord-val" id="hudCoordY">0.000</span>
+              </div>
+              <div class="coord-box">
+                <span class="coord-axis">Z</span>
+                <span class="coord-val" id="hudCoordZ">0.000</span>
+              </div>
+            </div>
+
+            <!-- Nearest Neighbors -->
+            <div class="hud-neighbors-section">
+              <div class="hud-neighbors-title">Top 3 Closest Words</div>
+              <div class="neighbor-list" id="hudNeighborList">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+const PRESETS = {
+        bank: {
+          corpus: [
+            'The river bank overflowed after heavy rain.',
+            'I deposited money in the bank yesterday.',
+            'Clear water flows down the river.',
+            'She checked her account balance and money.'
+          ].join('\n'),
+          ctxALabel: 'Context A: River Bank',
+          ctxA: 'He sat by the river bank watching the water.',
+          ctxBLabel: 'Context B: Finance Bank',
+          ctxB: 'The bank approved her account money loan.',
+          focusWord: 'bank'
+        },
+        apple: {
+          corpus: [
+            'She ate a sweet red apple after lunch.',
+            'Apple released a fast new laptop chip today.',
+            'Fresh orchard fruit tastes sweet and crisp.',
+            'The engineer wrote code on her Apple laptop.'
+          ].join('\n'),
+          ctxALabel: 'Context A: Fresh Fruit',
+          ctxA: 'She sliced the crisp sweet apple fruit.',
+          ctxBLabel: 'Context B: Tech Device',
+          ctxB: 'The engineer upgraded his Apple laptop chip.',
+          focusWord: 'apple'
+        },
+        empty: {
+          corpus: '',
+          ctxALabel: 'Context A: River Bank',
+          ctxA: 'He sat by the river bank watching the water.',
+          ctxBLabel: 'Context B: Finance Bank',
+          ctxB: 'The bank approved her account money loan.',
+          focusWord: ''
+        }
+      };
+
+      const SPECIAL_TOKENS = [
+        { token: '[PAD]', id: 0, isSpecial: true },
+        { token: '[UNK]', id: 1, isSpecial: true },
+        { token: '[CLS]', id: 2, isSpecial: true },
+        { token: '[SEP]', id: 3, isSpecial: true }
+      ];
+
+      // Function/stop words get lower self-attention key salience so semantic
+      // content words visibly drive contextual disambiguation.
+      const STOPWORDS = new Set([
+        'the', 'a', 'an', 'in', 'on', 'by', 'at', 'to', 'of', 'for', 'and',
+        'or', 'is', 'are', 'was', 'were', 'he', 'she', 'it', 'they', 'i',
+        'her', 'his', 'their', 'my', 'after', 'down', 'with', 'from', 'as'
+      ]);
+
+      // Domain semantic anchors reinforce clean cluster separation in 3D space
+      // while remaining 100% deterministic and supplemented by corpus co-occurrence.
+      const SEMANTIC_LEXICON = {
+        // Cluster 1: Nature / Water / Fruit (-X, +Y)
+        river: [-0.78, 0.56, 0.18],
+        water: [-0.84, 0.62, -0.12],
+        rain: [-0.72, 0.48, 0.34],
+        overflowed: [-0.68, 0.42, 0.28],
+        flows: [-0.76, 0.58, -0.22],
+        clear: [-0.64, 0.52, -0.30],
+        heavy: [-0.58, 0.34, 0.25],
+        watching: [-0.42, 0.28, -0.18],
+        sat: [-0.36, 0.20, -0.14],
+
+        // Fruit sub-cluster (-X, +Y)
+        fruit: [-0.82, 0.60, 0.15],
+        sweet: [-0.76, 0.54, 0.24],
+        crisp: [-0.74, 0.50, -0.16],
+        orchard: [-0.80, 0.64, 0.10],
+        fresh: [-0.70, 0.46, -0.20],
+        red: [-0.62, 0.44, 0.18],
+        ate: [-0.55, 0.36, 0.12],
+        lunch: [-0.50, 0.32, 0.08],
+        sliced: [-0.66, 0.48, -0.12],
+
+        // Cluster 2: Finance / Technology (+X, -Y)
+        money: [0.82, -0.56, 0.16],
+        account: [0.85, -0.60, -0.14],
+        balance: [0.78, -0.54, -0.22],
+        deposited: [0.74, -0.48, 0.28],
+        loan: [0.80, -0.58, 0.22],
+        approved: [0.68, -0.44, 0.18],
+        checked: [0.62, -0.40, -0.18],
+        yesterday: [0.54, -0.34, 0.24],
+
+        // Tech sub-cluster (+X, -Y)
+        laptop: [0.84, -0.58, -0.16],
+        chip: [0.80, -0.54, 0.20],
+        engineer: [0.74, -0.48, -0.24],
+        code: [0.76, -0.50, -0.12],
+        wrote: [0.64, -0.42, -0.10],
+        released: [0.66, -0.44, 0.26],
+        fast: [0.60, -0.38, 0.22],
+        new: [0.52, -0.30, 0.18],
+        today: [0.48, -0.28, 0.20],
+        upgraded: [0.70, -0.46, 0.14],
+
+        // Polysemous bridge tokens sit near the origin between clusters in Static mode!
+        bank: [0.02, -0.02, 0.08],
+        apple: [-0.03, 0.03, 0.06]
+      };
+
+      /* --------------------------------------------------------------------------
+       * 2. DETERMINISTIC HASH & MATH HELPERS
+       * -------------------------------------------------------------------------- */
+      function hashString(str) {
+        let h = 2166136261 >>> 0;
+        for (let i = 0; i < str.length; i++) {
+          h ^= str.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+
+      function seededUnitVector(str) {
+        const h1 = hashString(str + '_x');
+        const h2 = hashString(str + '_y');
+        const h3 = hashString(str + '_z');
+        const x = ((h1 % 2000) / 1000) - 1;
+        const y = ((h2 % 2000) / 1000) - 1;
+        const z = ((h3 % 2000) / 1000) - 1;
+        const len = Math.hypot(x, y, z) || 1;
+        return [x / len, y / len, z / len];
+      }
+
+      function vecAdd(a, b) {
+        return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+      }
+
+      function vecSub(a, b) {
+        return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+      }
+
+      function vecScale(v, s) {
+        return [v[0] * s, v[1] * s, v[2] * s];
+      }
+
+      function vecNorm(v) {
+        return Math.hypot(v[0], v[1], v[2]);
+      }
+
+      function vecDot(a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      }
+
+      function cosineSimilarity(a, b) {
+        const na = vecNorm(a);
+        const nb = vecNorm(b);
+        if (na < 1e-8 || nb < 1e-8) return 0;
+        return vecDot(a, b) / (na * nb);
+      }
+
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      /* --------------------------------------------------------------------------
+       * 3. TOKENIZER & VOCABULARY ENGINE (STAGES 1–4)
+       * -------------------------------------------------------------------------- */
+      class TokenizerEngine {
+        constructor() {
+          this.vocabList = [];
+          this.tokenToId = new Map();
+          this.idToToken = new Map();
+          this.corpusSentences = [];
+          this.tokenizedCorpus = [];
+        }
+
+        /**
+         * Splits raw sentence text into clean word tokens while preserving
+         * normalized lookup keys.
+         */
+        tokenizeRawText(sentence) {
+          if (!sentence || !sentence.trim()) return [];
+          const rawPieces = sentence.trim().split(/\s+/);
+          const tokens = [];
+          for (const piece of rawPieces) {
+            const cleaned = piece.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9']+$/gi, '');
+            if (cleaned.length > 0) {
+              tokens.push({
+                surface: piece.replace(/^[.,!?;:"()]+|[.,!?;:"()]+$/g, '') || cleaned,
+                norm: cleaned
+              });
+            }
+          }
+          return tokens;
+        }
+
+        /**
+         * Builds deterministic vocabulary from Stage 1 sentences:
+         * [PAD] (0), [UNK] (1), [CLS] (2), [SEP] (3), followed by sorted unique words.
+         */
+        buildFromCorpus(corpusText) {
+          const lines = corpusText
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+          this.corpusSentences = lines;
+          const freqMap = new Map();
+          const rawSentencesTokens = [];
+
+          for (const line of lines) {
+            const toks = this.tokenizeRawText(line);
+            rawSentencesTokens.push(toks);
+            for (const t of toks) {
+              freqMap.set(t.norm, (freqMap.get(t.norm) || 0) + 1);
+            }
+          }
+
+          // Sort unique words alphabetically for deterministic ID assignment
+          const sortedWords = Array.from(freqMap.keys()).sort((a, b) => a.localeCompare(b));
+
+          this.vocabList = [];
+          this.tokenToId.clear();
+          this.idToToken.clear();
+
+          // 1. Add special tokens [0..3]
+          for (const sp of SPECIAL_TOKENS) {
+            const entry = {
+              id: sp.id,
+              token: sp.token,
+              freq: 0,
+              isSpecial: true
+            };
+            this.vocabList.push(entry);
+            this.tokenToId.set(sp.token, sp.id);
+            this.idToToken.set(sp.id, entry);
+          }
+
+          // 2. Add corpus words starting at ID 4
+          sortedWords.forEach((word, idx) => {
+            const id = SPECIAL_TOKENS.length + idx;
+            const entry = {
+              id,
+              token: word,
+              freq: freqMap.get(word) || 1,
+              isSpecial: false
+            };
+            this.vocabList.push(entry);
+            this.tokenToId.set(word, id);
+            this.idToToken.set(id, entry);
+          });
+
+          // 3. Tokenize every corpus sentence with assigned IDs
+          this.tokenizedCorpus = rawSentencesTokens.map((toks, sIdx) => ({
+            sentenceIndex: sIdx,
+            rawSentence: lines[sIdx],
+            tokens: toks.map((t, pos) => {
+              const id = this.tokenToId.has(t.norm) ? this.tokenToId.get(t.norm) : 1;
+              return {
+                position: pos,
+                surface: t.surface,
+                norm: t.norm,
+                id,
+                isUnk: id === 1
+              };
+            })
+          }));
+
+          return {
+            vocabList: this.vocabList,
+            tokenizedCorpus: this.tokenizedCorpus
+          };
+        }
+
+        /**
+         * Tokenizes the 2nd sentence (Query), mapping unknown words to [UNK] (ID: 1).
+         */
+        tokenizeQuery(sentence) {
+          const toks = this.tokenizeRawText(sentence);
+          return toks.map((t, pos) => {
+            const known = this.tokenToId.has(t.norm);
+            const id = known ? this.tokenToId.get(t.norm) : 1;
+            return {
+              position: pos,
+              surface: t.surface,
+              norm: t.norm,
+              displayToken: known ? t.norm : `${t.surface} → [UNK]`,
+              id,
+              isUnk: !known
+            };
+          });
+        }
+      }
+
+      /* --------------------------------------------------------------------------
+       * 4. EMBEDDING & SELF-ATTENTION ENGINE (STAGE 5)
+       * -------------------------------------------------------------------------- */
+      class EmbeddingEngine {
+        constructor() {
+          this.staticVectors = new Map(); // tokenString -> [x, y, z]
+        }
+
+        /**
+         * Computes deterministic 3D Static Embeddings combining:
+         * 1. Co-occurrence neighborhood averaging across corpus sentences
+         * 2. Domain semantic coordinates / deterministic hash projections
+         */
+        computeStaticEmbeddings(vocabList, tokenizedCorpus) {
+          this.staticVectors.clear();
+
+          // Special tokens placed cleanly around origin
+          this.staticVectors.set('[PAD]', [0.0, 0.0, -0.85]);
+          this.staticVectors.set('[UNK]', [0.0, 0.0, 0.0]);
+          this.staticVectors.set('[CLS]', [0.0, 0.85, 0.0]);
+          this.staticVectors.set('[SEP]', [0.0, -0.85, 0.0]);
+
+          const words = vocabList.filter(v => !v.isSpecial).map(v => v.token);
+          if (words.length === 0) return this.staticVectors;
+
+          // Build weighted co-occurrence graph from corpus sentences
+          const cooccur = new Map();
+          for (const w of words) cooccur.set(w, new Map());
+
+          for (const sent of tokenizedCorpus) {
+            const seq = sent.tokens.map(t => t.norm);
+            for (let i = 0; i < seq.length; i++) {
+              for (let j = 0; j < seq.length; j++) {
+                if (i === j) continue;
+                const wA = seq[i];
+                const wB = seq[j];
+                if (!cooccur.has(wA) || !cooccur.has(wB)) continue;
+                const dist = Math.abs(i - j);
+                const weight = 1 / (1 + 0.35 * dist);
+                const row = cooccur.get(wA);
+                row.set(wB, (row.get(wB) || 0) + weight);
+              }
+            }
+          }
+
+          // Initialize base vectors from semantic lexicon or deterministic unit vectors
+          const baseVecs = new Map();
+          for (const w of words) {
+            if (SEMANTIC_LEXICON[w]) {
+              baseVecs.set(w, [...SEMANTIC_LEXICON[w]]);
+            } else {
+              const u = seededUnitVector(w);
+              baseVecs.set(w, vecScale(u, 0.68));
+            }
+          }
+
+          // 2 iterations of neighborhood message passing so novel corpus words
+          // naturally gravitate toward their co-occurring sentence neighbors
+          let current = baseVecs;
+          for (let iter = 0; iter < 2; iter++) {
+            const next = new Map();
+            for (const w of words) {
+              const selfVec = current.get(w);
+              const neighbors = cooccur.get(w);
+              if (!neighbors || neighbors.size === 0) {
+                next.set(w, selfVec);
+                continue;
+              }
+
+              let sumVec = [0, 0, 0];
+              let sumW = 0;
+              for (const [nb, wt] of neighbors.entries()) {
+                // Keep polysemous hubs balanced between both contexts
+                const salience = STOPWORDS.has(nb) ? 0.25 : 1.0;
+                const effW = wt * salience;
+                sumVec = vecAdd(sumVec, vecScale(current.get(nb), effW));
+                sumW += effW;
+              }
+
+              if (sumW > 0) {
+                const avgNeighbor = vecScale(sumVec, 1 / sumW);
+                const blend = (w === 'bank' || w === 'apple') ? 0.35 : 0.28;
+                next.set(w, vecAdd(vecScale(selfVec, 1 - blend), vecScale(avgNeighbor, blend)));
+              } else {
+                next.set(w, selfVec);
+              }
+            }
+            current = next;
+          }
+
+          // Normalize scale cleanly into [-0.95, 0.95] cube while preserving origin bridge
+          for (const [w, vec] of current.entries()) {
+            const clamped = [
+              clamp(vec[0], -0.95, 0.95),
+              clamp(vec[1], -0.95, 0.95),
+              clamp(vec[2], -0.95, 0.95)
+            ];
+            this.staticVectors.set(w, clamped);
+          }
+
+          return this.staticVectors;
+        }
+
+        /**
+         * Retrieves the static 3D vector for any token (falling back to [UNK]).
+         */
+        getStaticVector(tokenNorm) {
+          if (this.staticVectors.has(tokenNorm)) {
+            return [...this.staticVectors.get(tokenNorm)];
+          }
+          return [...(this.staticVectors.get('[UNK]') || [0, 0, 0])];
+        }
+
+        /**
+         * Computes Transformer-style Contextual Embeddings + Self-Attention Matrix
+         * for the 2nd sentence tokens.
+         */
+        computeContextualSequence(queryTokens) {
+          const n = queryTokens.length;
+          if (n === 0) return [];
+
+          // 1. Static lookup + Sinusoidal Positional Encoding offset
+          const staticList = queryTokens.map((tok, pos) => {
+            const base = tok.isUnk ? this.getStaticVector('[UNK]') : this.getStaticVector(tok.norm);
+            const posOffset = [
+              0.035 * Math.sin(pos * 1.15),
+              0.035 * Math.cos(pos * 0.95),
+              0.055 * Math.sin(pos * 0.75 + 0.4)
+            ];
+            return {
+              base,
+              withPos: vecAdd(base, posOffset)
+            };
+          });
+
+          // 2. Compute Scaled Dot-Product Self-Attention weights alpha[i][j]
+          const results = [];
+          for (let i = 0; i < n; i++) {
+            const tokI = queryTokens[i];
+            const vecI = staticList[i].base;
+            const isStopI = STOPWORDS.has(tokI.norm);
+            const isPolysemousI = tokI.norm === 'bank' || tokI.norm === 'apple';
+
+            const logits = [];
+            for (let j = 0; j < n; j++) {
+              const tokJ = queryTokens[j];
+              const vecJ = staticList[j].base;
+              const isStopJ = STOPWORDS.has(tokJ.norm);
+
+              // Semantic alignment score
+              const sim = vecDot(vecI, vecJ) * 1.85;
+              // Content words act as strong contextual keys; stopwords are suppressed
+              const keySalience = tokJ.isUnk ? -0.4 : (isStopJ ? -1.35 : 1.15);
+              // Self-retention bias vs neighbor context pull
+              const selfBias = (i === j) ? (isPolysemousI ? -0.35 : 0.75) : 0.0;
+              // Relative positional proximity bonus
+              const distPenalty = -0.14 * Math.abs(i - j);
+
+              logits.push(sim + keySalience + selfBias + distPenalty);
+            }
+
+            // Softmax normalization
+            const maxLogit = Math.max(...logits);
+            const exps = logits.map(l => Math.exp(l - maxLogit));
+            const sumExp = exps.reduce((acc, v) => acc + v, 0) || 1;
+            const weights = exps.map(e => e / sumExp);
+
+            // 3. Weighted value aggregation (Contextual shift)
+            let attendedContext = [0, 0, 0];
+            for (let j = 0; j < n; j++) {
+              attendedContext = vecAdd(attendedContext, vecScale(staticList[j].withPos, weights[j]));
+            }
+
+            // Polysemous tokens and content tokens shift strongly toward attended context;
+            // stopwords shift moderately while preserving positional separation.
+            const shiftGain = isPolysemousI ? 0.88 : (isStopI ? 0.45 : 0.68);
+            const rawContextual = vecAdd(
+              vecScale(staticList[i].withPos, 1 - shiftGain),
+              vecScale(attendedContext, shiftGain)
+            );
+
+            // Add subtle contextual Z-axis lift so users can see dimensional depth shift
+            const zContextualLift = (i - (n - 1) / 2) * 0.045;
+            const contextualVec = [
+              clamp(rawContextual[0], -1.05, 1.05),
+              clamp(rawContextual[1], -1.05, 1.05),
+              clamp(rawContextual[2] + zContextualLift, -1.05, 1.05)
+            ];
+
+            const shiftMagnitude = vecNorm(vecSub(contextualVec, staticList[i].base));
+
+            results.push({
+              ...tokI,
+              staticVec: staticList[i].base,
+              contextualVec,
+              shiftMagnitude,
+              attentionWeights: weights.map((w, idx) => ({
+                targetIndex: idx,
+                token: queryTokens[idx].surface,
+                norm: queryTokens[idx].norm,
+                weight: w
+              }))
+            });
+          }
+
+          return results;
+        }
+      }
+
+      /* --------------------------------------------------------------------------
+       * 5. PURE HTML5 CANVAS 3D VECTOR SPACE ENGINE (STAGE 6)
+       * -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+       * 4. 3D VECTOR SPACE CANVAS ENGINE (PURE HTML5 CANVAS)
+       * -------------------------------------------------------------------------- */
+      const KEY_ANCHOR_WORDS = new Set([
+        'river', 'water', 'rain', 'money', 'account', 'balance',
+        'fruit', 'sweet', 'orchard', 'laptop', 'chip', 'code', 'bank', 'apple'
+      ]);
+
+      class VectorSpace3D {
+        constructor(canvas, onNodeSelect) {
+          this.canvas = canvas;
+          this.ctx = canvas.getContext('2d');
+          this.onNodeSelect = onNodeSelect;
+
+          // Camera orbit parameters
+          this.yaw = -0.62;
+          this.pitch = 0.36;
+          this.zoom = 1.0;
+
+          this.targetYaw = this.yaw;
+          this.targetPitch = this.pitch;
+          this.targetZoom = this.zoom;
+
+          this.autoRotate = true;
+          this.showShiftVectors = true;
+          this.showAllLabels = false; // Zero text overlap by default!
+          this.mode = 'contextual'; // 'static' | 'contextual'
+
+          // Scene data
+          this.vocabNodes = []; // { id, token, pos: [x,y,z], freq }
+          this.queryNodes = []; // { position, surface, norm, id, isUnk, staticVec, contextualVec, currentVec, targetVec }
+          this.selectedNodeKey = null;
+          this.hoveredNodeKey = null;
+
+          // Projected 2D hit targets for hover/click picking
+          this.hitTargets = [];
+
+          // Pointer interaction state
+          this.isDragging = false;
+          this.dragMoved = false;
+          this.lastPointerX = 0;
+          this.lastPointerY = 0;
+
+          this.width = 800;
+          this.height = 600;
+          this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+          this._bindEvents();
+          this.resize();
+        }
+
+        resize() {
+          const rect = this.canvas.parentElement.getBoundingClientRect();
+          this.width = Math.max(300, rect.width);
+          this.height = Math.max(300, rect.height);
+          this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+          this.canvas.width = Math.floor(this.width * this.dpr);
+          this.canvas.height = Math.floor(this.height * this.dpr);
+          this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+        }
+
+        resetCamera() {
+          this.targetYaw = -0.62;
+          this.targetPitch = 0.36;
+          this.targetZoom = 1.0;
+        }
+
+        setMode(mode) {
+          this.mode = mode;
+          for (const qn of this.queryNodes) {
+            qn.targetVec = mode === 'contextual' ? [...qn.contextualVec] : [...qn.staticVec];
+          }
+        }
+
+        updateSceneData(vocabList, staticVectors, contextualSequence) {
+          // 1. Vocabulary reference nodes (excluding [PAD]/[CLS]/[SEP] clutter, keeping [UNK] + words)
+          this.vocabNodes = vocabList
+            .filter(v => !v.isSpecial || v.token === '[UNK]')
+            .map(v => ({
+              key: `vocab:${v.id}`,
+              type: 'vocab',
+              id: v.id,
+              token: v.token,
+              freq: v.freq,
+              pos: staticVectors.get(v.token) || [0, 0, 0]
+            }));
+
+          // 2. Preserve current animated positions if matching token index exists
+          const prevMap = new Map();
+          for (const old of this.queryNodes) {
+            prevMap.set(old.position, [...old.currentVec]);
+          }
+
+          this.queryNodes = contextualSequence.map(item => {
+            const target = this.mode === 'contextual' ? [...item.contextualVec] : [...item.staticVec];
+            const start = prevMap.get(item.position) || [...item.staticVec];
+            return {
+              key: `query:${item.position}`,
+              type: 'query',
+              position: item.position,
+              surface: item.surface,
+              norm: item.norm,
+              id: item.id,
+              isUnk: item.isUnk,
+              staticVec: [...item.staticVec],
+              contextualVec: [...item.contextualVec],
+              currentVec: start,
+              targetVec: target
+            };
+          });
+        }
+
+        project(x, y, z) {
+          const cosY = Math.cos(this.yaw);
+          const sinY = Math.sin(this.yaw);
+          const x1 = x * cosY - z * sinY;
+          const z1 = x * sinY + z * cosY;
+
+          const cosX = Math.cos(this.pitch);
+          const sinX = Math.sin(this.pitch);
+          const y2 = y * cosX - z1 * sinX;
+          const z2 = y * sinX + z1 * cosX;
+
+          const fov = 3.4;
+          const zCam = fov + z2;
+          const safeZ = Math.max(0.4, zCam);
+          const baseScale = Math.min(this.width, this.height) * 0.35 * this.zoom;
+          const scale = (fov / safeZ) * baseScale;
+
+          const sx = this.width * 0.5 + x1 * scale;
+          const sy = this.height * 0.52 - y2 * scale;
+
+          return { sx, sy, zDepth: z2, scale };
+        }
+
+        _bindEvents() {
+          window.addEventListener('resize', () => this.resize());
+
+          if (window.ResizeObserver && this.canvas.parentElement) {
+            new ResizeObserver(() => this.resize()).observe(this.canvas.parentElement);
+          }
+
+          // Mouse Orbit & Hover Picking
+          this.canvas.addEventListener('mousedown', (e) => {
+            this.isDragging = true;
+            this.dragMoved = false;
+            this.lastPointerX = e.clientX;
+            this.lastPointerY = e.clientY;
+          });
+
+          window.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (this.isDragging) {
+              const dx = e.clientX - this.lastPointerX;
+              const dy = e.clientY - this.lastPointerY;
+              if (Math.hypot(dx, dy) > 3) this.dragMoved = true;
+              this.targetYaw += dx * 0.0085;
+              this.targetPitch = clamp(this.targetPitch + dy * 0.0085, -1.35, 1.35);
+              this.lastPointerX = e.clientX;
+              this.lastPointerY = e.clientY;
+            } else if (mx >= 0 && mx <= this.width && my >= 0 && my <= this.height) {
+              const hit = this._findHitTarget(mx, my);
+              this.hoveredNodeKey = hit ? hit.key : null;
+              this.canvas.style.cursor = hit ? 'pointer' : 'grab';
+            }
+          });
+
+          window.addEventListener('mouseup', (e) => {
+            if (this.isDragging && !this.dragMoved) {
+              const rect = this.canvas.getBoundingClientRect();
+              const mx = e.clientX - rect.left;
+              const my = e.clientY - rect.top;
+              const hit = this._findHitTarget(mx, my);
+              if (hit && this.onNodeSelect) {
+                this.selectedNodeKey = hit.key;
+                this.onNodeSelect(hit);
+              }
+            }
+            this.isDragging = false;
+          });
+
+          // Wheel Zoom
+          this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = e.deltaY > 0 ? 0.92 : 1.08;
+            this.targetZoom = clamp(this.targetZoom * factor, 0.55, 2.35);
+          }, { passive: false });
+
+          // Touch Orbit & 2-Finger Pinch Zoom
+          let touchStartDist = 0;
+          let touchStartZoom = 1;
+
+          this.canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+              this.isDragging = true;
+              this.dragMoved = false;
+              this.lastPointerX = e.touches[0].clientX;
+              this.lastPointerY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+              this.isDragging = false;
+              touchStartDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+              );
+              touchStartZoom = this.targetZoom;
+            }
+          }, { passive: true });
+
+          this.canvas.addEventListener('touchmove', (e) => {
+            if (this.isDragging && e.touches.length === 1) {
+              const dx = e.touches[0].clientX - this.lastPointerX;
+              const dy = e.touches[0].clientY - this.lastPointerY;
+              if (Math.hypot(dx, dy) > 4) this.dragMoved = true;
+              this.targetYaw += dx * 0.009;
+              this.targetPitch = clamp(this.targetPitch + dy * 0.009, -1.35, 1.35);
+              this.lastPointerX = e.touches[0].clientX;
+              this.lastPointerY = e.touches[0].clientY;
+            } else if (e.touches.length === 2 && touchStartDist > 0) {
+              const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+              );
+              const factor = currentDist / touchStartDist;
+              this.targetZoom = clamp(touchStartZoom * factor, 0.55, 2.35);
+            }
+          }, { passive: true });
+
+          this.canvas.addEventListener('touchend', (e) => {
+            if (this.isDragging && !this.dragMoved && e.changedTouches.length === 1) {
+              const rect = this.canvas.getBoundingClientRect();
+              const mx = e.changedTouches[0].clientX - rect.left;
+              const my = e.changedTouches[0].clientY - rect.top;
+              const hit = this._findHitTarget(mx, my);
+              if (hit && this.onNodeSelect) {
+                this.selectedNodeKey = hit.key;
+                this.onNodeSelect(hit);
+              }
+            }
+            if (e.touches.length < 2) {
+              touchStartDist = 0;
+            }
+            this.isDragging = false;
+          });
+        }
+
+        _findHitTarget(mx, my) {
+          for (let i = this.hitTargets.length - 1; i >= 0; i--) {
+            const t = this.hitTargets[i];
+            const dist = Math.hypot(mx - t.sx, my - t.sy);
+            if (dist <= t.radius + 8) {
+              return t;
+            }
+          }
+          return null;
+        }
+
+        renderFrame() {
+          if (this.autoRotate && !this.isDragging) {
+            this.targetYaw += 0.0022;
+          }
+          this.yaw += (this.targetYaw - this.yaw) * 0.12;
+          this.pitch += (this.targetPitch - this.pitch) * 0.12;
+          this.zoom += (this.targetZoom - this.zoom) * 0.12;
+
+          for (const qn of this.queryNodes) {
+            qn.currentVec[0] += (qn.targetVec[0] - qn.currentVec[0]) * 0.11;
+            qn.currentVec[1] += (qn.targetVec[1] - qn.currentVec[1]) * 0.11;
+            qn.currentVec[2] += (qn.targetVec[2] - qn.currentVec[2]) * 0.11;
+          }
+
+          const ctx = this.ctx;
+          ctx.clearRect(0, 0, this.width, this.height);
+
+          this._drawGridAndAxes(ctx);
+          this._drawSceneNodes(ctx);
+        }
+
+        _drawGridAndAxes(ctx) {
+          const extent = 1.05;
+          const steps = 4;
+
+          // Subtle XZ floor grid
+          ctx.lineWidth = 1;
+          for (let i = -steps; i <= steps; i++) {
+            const t = (i / steps) * extent;
+            const alpha = i === 0 ? 0.16 : 0.05;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+
+            const p1 = this.project(t, -0.95, -extent);
+            const p2 = this.project(t, -0.95, extent);
+            ctx.beginPath();
+            ctx.moveTo(p1.sx, p1.sy);
+            ctx.lineTo(p2.sx, p2.sy);
+            ctx.stroke();
+
+            const p3 = this.project(-extent, -0.95, t);
+            const p4 = this.project(extent, -0.95, t);
+            ctx.beginPath();
+            ctx.moveTo(p3.sx, p3.sy);
+            ctx.lineTo(p4.sx, p4.sy);
+            ctx.stroke();
+          }
+
+          // Primary 3D Coordinate Axes
+          const axes = [
+            { from: [-extent, 0, 0], to: [extent, 0, 0], color: 'rgba(99, 102, 241, 0.45)', label: 'Dim 1: Semantic X' },
+            { from: [0, -extent, 0], to: [0, extent, 0], color: 'rgba(168, 85, 247, 0.45)', label: 'Dim 2: Semantic Y' },
+            { from: [0, 0, -extent], to: [0, 0, extent], color: 'rgba(16, 185, 129, 0.45)', label: 'Dim 3: Contextual Z' }
+          ];
+
+          ctx.font = '600 10px "JetBrains Mono", monospace';
+          for (const ax of axes) {
+            const a = this.project(...ax.from);
+            const b = this.project(...ax.to);
+
+            ctx.strokeStyle = ax.color;
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(a.sx, a.sy);
+            ctx.lineTo(b.sx, b.sy);
+            ctx.stroke();
+
+            ctx.fillStyle = ax.color;
+            ctx.beginPath();
+            ctx.arc(b.sx, b.sy, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(250, 250, 250, 0.65)';
+            ctx.fillText(ax.label, b.sx + 6, b.sy + 3);
+          }
+
+          // Subtle Cluster Region Watermarks
+          const clusterLeft = this.project(-0.78, 0.65, 0);
+          const clusterRight = this.project(0.78, -0.62, 0);
+          ctx.font = '600 10.5px "Inter", sans-serif';
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+          ctx.fillText('◀ Nature / Water / Fruit Cluster', clusterLeft.sx - 80, clusterLeft.sy - 14);
+          ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+          ctx.fillText('Finance / Tech Cluster ▶', clusterRight.sx - 60, clusterRight.sy + 22);
+        }
+
+        _drawSceneNodes(ctx) {
+          const renderables = [];
+
+          for (const vn of this.vocabNodes) {
+            const proj = this.project(...vn.pos);
+            renderables.push({
+              kind: 'vocab',
+              data: vn,
+              proj,
+              zDepth: proj.zDepth
+            });
+          }
+
+          for (const qn of this.queryNodes) {
+            const proj = this.project(...qn.currentVec);
+            const staticProj = this.project(...qn.staticVec);
+            renderables.push({
+              kind: 'query',
+              data: qn,
+              proj,
+              staticProj,
+              zDepth: proj.zDepth - 0.05
+            });
+          }
+
+          renderables.sort((a, b) => b.zDepth - a.zDepth);
+          this.hitTargets = [];
+          const queryNormSet = new Set(this.queryNodes.map(q => q.norm));
+
+          for (const item of renderables) {
+            if (item.kind === 'vocab') {
+              this._drawVocabNode(ctx, item.data, item.proj, queryNormSet);
+            } else {
+              this._drawQueryNode(ctx, item.data, item.proj, item.staticProj);
+            }
+          }
+        }
+
+        _drawVocabNode(ctx, vn, proj, queryNormSet) {
+          const isSelected = this.selectedNodeKey === vn.key;
+          const isHovered = this.hoveredNodeKey === vn.key;
+          const alsoInQuery = queryNormSet.has(vn.token);
+          const isAnchor = KEY_ANCHOR_WORDS.has(vn.token);
+
+          // Zero Text Overlap:
+          // By default, only render text labels for key anchor words, selected word, hovered word, or if user enabled showAllLabels.
+          const shouldDrawLabel = this.showAllLabels || isSelected || isHovered || isAnchor;
+
+          const depthFactor = clamp(proj.scale / 220, 0.65, 1.35);
+          const radius = (isSelected || isHovered ? 6.5 : (isAnchor ? 4.5 : 3.2)) * depthFactor;
+
+          ctx.beginPath();
+          ctx.arc(proj.sx, proj.sy, radius, 0, Math.PI * 2);
+          ctx.fillStyle = isSelected || isHovered
+            ? '#38bdf8'
+            : (isAnchor ? 'rgba(148, 163, 184, 0.85)' : 'rgba(148, 163, 184, 0.42)');
+          ctx.fill();
+
+          if (isSelected || isHovered) {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+          }
+
+          if (shouldDrawLabel && (!alsoInQuery || isSelected || isHovered)) {
+            ctx.font = isSelected || isHovered
+              ? '600 11.5px "JetBrains Mono", monospace'
+              : '500 10.5px "JetBrains Mono", monospace';
+            ctx.fillStyle = isSelected || isHovered
+              ? '#fafafa'
+              : (isAnchor ? 'rgba(240, 240, 240, 0.85)' : 'rgba(161, 161, 170, 0.65)');
+            ctx.fillText(vn.token, proj.sx + radius + 5, proj.sy + 3.5);
+          }
+
+          this.hitTargets.push({
+            key: vn.key,
+            type: 'vocab',
+            id: vn.id,
+            token: vn.token,
+            vec: vn.pos,
+            sx: proj.sx,
+            sy: proj.sy,
+            radius
+          });
+        }
+
+        _drawQueryNode(ctx, qn, proj, staticProj) {
+          const isSelected = this.selectedNodeKey === qn.key;
+          const isHovered = this.hoveredNodeKey === qn.key;
+          const isPolysemous = qn.norm === 'bank' || qn.norm === 'apple';
+
+          const depthFactor = clamp(proj.scale / 220, 0.75, 1.45);
+          const radius = (isPolysemous ? 9.5 : 7.8) * depthFactor;
+
+          // 1. Static -> Contextual dashed shift vector arrow
+          const shiftDistPx = Math.hypot(proj.sx - staticProj.sx, proj.sy - staticProj.sy);
+          if (this.mode === 'contextual' && this.showShiftVectors && shiftDistPx > 6) {
+            ctx.beginPath();
+            ctx.arc(staticProj.sx, staticProj.sy, 4.2, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.75)';
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = isPolysemous ? 'rgba(245, 158, 11, 0.92)' : 'rgba(56, 189, 248, 0.65)';
+            ctx.lineWidth = isPolysemous ? 2.0 : 1.4;
+            ctx.beginPath();
+            ctx.moveTo(staticProj.sx, staticProj.sy);
+            ctx.lineTo(proj.sx, proj.sy);
+            ctx.stroke();
+            ctx.restore();
+
+            const angle = Math.atan2(proj.sy - staticProj.sy, proj.sx - staticProj.sx);
+            const tipX = proj.sx - Math.cos(angle) * (radius + 3);
+            const tipY = proj.sy - Math.sin(angle) * (radius + 3);
+            const arrowLen = 7;
+
+            ctx.fillStyle = isPolysemous ? '#f59e0b' : '#38bdf8';
+            ctx.beginPath();
+            ctx.moveTo(tipX, tipY);
+            ctx.lineTo(tipX - arrowLen * Math.cos(angle - 0.42), tipY - arrowLen * Math.sin(angle - 0.42));
+            ctx.lineTo(tipX - arrowLen * Math.cos(angle + 0.42), tipY - arrowLen * Math.sin(angle + 0.42));
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          // 2. Outer Radial Glow Halo
+          const coreColor = qn.isUnk
+            ? '#f59e0b'
+            : (isPolysemous ? '#10b981' : '#38bdf8');
+          const glowColor = qn.isUnk
+            ? 'rgba(245, 158, 11, 0.35)'
+            : (isPolysemous ? 'rgba(16, 185, 129, 0.42)' : 'rgba(56, 189, 248, 0.32)');
+
+          const grad = ctx.createRadialGradient(
+            proj.sx, proj.sy, radius * 0.2,
+            proj.sx, proj.sy, radius * 2.5
+          );
+          grad.addColorStop(0, glowColor);
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(proj.sx, proj.sy, radius * 2.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 3. Glowing Sphere Body
+          ctx.beginPath();
+          ctx.arc(proj.sx, proj.sy, radius, 0, Math.PI * 2);
+          ctx.fillStyle = coreColor;
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(proj.sx - radius * 0.3, proj.sy - radius * 0.3, radius * 0.28, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fill();
+
+          if (isSelected || isHovered) {
+            ctx.beginPath();
+            ctx.arc(proj.sx, proj.sy, radius + 4, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+          }
+
+          // 4. Label Pill
+          const labelText = `${qn.surface} #${qn.id}`;
+          ctx.font = '700 11.5px "JetBrains Mono", monospace';
+          const textMetrics = ctx.measureText(labelText);
+          const pillW = textMetrics.width + 12;
+          const pillH = 20;
+          const pillX = proj.sx + radius + 7;
+          const pillY = proj.sy - pillH / 2;
+
+          ctx.fillStyle = isSelected ? 'rgba(18, 18, 22, 0.96)' : 'rgba(9, 9, 11, 0.88)';
+          ctx.strokeStyle = isSelected ? '#10b981' : 'rgba(255, 255, 255, 0.16)';
+          ctx.lineWidth = isSelected ? 1.5 : 1;
+
+          this._roundRect(ctx, pillX, pillY, pillW, pillH, 5);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#fafafa';
+          ctx.fillText(labelText, pillX + 6, proj.sy + 4);
+
+          this.hitTargets.push({
+            key: qn.key,
+            type: 'query',
+            position: qn.position,
+            surface: qn.surface,
+            norm: qn.norm,
+            id: qn.id,
+            isUnk: qn.isUnk,
+            vec: qn.currentVec,
+            sx: proj.sx,
+            sy: proj.sy,
+            radius
+          });
+        }
+
+        _roundRect(ctx, x, y, width, height, radius) {
+          ctx.beginPath();
+          ctx.moveTo(x + radius, y);
+          ctx.lineTo(x + width - radius, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+          ctx.lineTo(x + width, y + height - radius);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+          ctx.lineTo(x + radius, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+          ctx.lineTo(x, y + radius);
+          ctx.quadraticCurveTo(x, y, x + radius, y);
+          ctx.closePath();
+        }
+      }
+
+/* --------------------------------------------------------------------------
+       * 5. GUIDED PIPELINE APP CONTROLLER (5 STEPS + 3D VIEWPORT)
+       * -------------------------------------------------------------------------- */
+      class PipelineApp {
+        constructor() {
+          this.tokenizer = new TokenizerEngine();
+          this.embedder = new EmbeddingEngine();
+          this.canvasEl = document.getElementById('vectorCanvas');
+          this.scene3D = new VectorSpace3D(this.canvasEl, (hit) => this.handleNodeSelect(hit));
+
+          this.currentStep = 1;
+          this.currentPreset = 'bank';
+          this.embeddingMode = 'contextual'; // 'static' | 'contextual'
+          this.contextualSequence = [];
+          this.selectedQueryIndex = 0;
+          this.inspectedNode = null;
+          this.showSpecialTokens = false;
+
+          this._cacheDOM();
+          this._bindUIEvents();
+          this._runFullPipeline(true);
+          this._startRenderLoop();
+        }
+
+        _cacheDOM() {
+          this.guidedWorkspace = document.getElementById('guidedWorkspace');
+
+          // Stepper tabs
+          this.stepperTabs = document.querySelectorAll('.stepper-tab');
+          this.stepViews = document.querySelectorAll('.step-view');
+
+          // Stage 1
+          this.corpusInput = document.getElementById('corpusInput');
+          this.corpusLineCount = document.getElementById('corpusLineCount');
+          this.buildPipelineBtn = document.getElementById('buildPipelineBtn');
+
+          // Stage 2
+          this.vocabSizeBadge = document.getElementById('vocabSizeBadge');
+          this.vocabSearchInput = document.getElementById('vocabSearchInput');
+          this.vocabTableBody = document.getElementById('vocabTableBody');
+          this.showSpecialTokensToggle = document.getElementById('showSpecialTokensToggle');
+
+          // Stage 3
+          this.totalCorpusTokensBadge = document.getElementById('totalCorpusTokensBadge');
+          this.corpusTokensContainer = document.getElementById('corpusTokensContainer');
+
+          // Stage 4
+          this.ctxBtnA = document.getElementById('ctxBtnA');
+          this.ctxBtnB = document.getElementById('ctxBtnB');
+          this.querySentenceInput = document.getElementById('querySentenceInput');
+          this.queryTokenCountBadge = document.getElementById('queryTokenCountBadge');
+          this.unkCounterLabel = document.getElementById('unkCounterLabel');
+          this.queryTokensContainer = document.getElementById('queryTokensContainer');
+
+          // Stage 5
+          this.embeddingModeBadge = document.getElementById('embeddingModeBadge');
+          this.btnStaticMode = document.getElementById('btnStaticMode');
+          this.btnContextualMode = document.getElementById('btnContextualMode');
+          this.modeExplanationBanner = document.getElementById('modeExplanationBanner');
+          this.attnSelectedTokenBadge = document.getElementById('attnSelectedTokenBadge');
+          this.attentionBarsContainer = document.getElementById('attentionBarsContainer');
+
+          // Step navigation buttons
+          this.prevBtn2 = document.getElementById('prevBtn2');
+          this.nextBtn2 = document.getElementById('nextBtn2');
+          this.prevBtn3 = document.getElementById('prevBtn3');
+          this.nextBtn3 = document.getElementById('nextBtn3');
+          this.prevBtn4 = document.getElementById('prevBtn4');
+          this.nextBtn4 = document.getElementById('nextBtn4');
+          this.prevBtn5 = document.getElementById('prevBtn5');
+          this.restartWalkthroughBtn = document.getElementById('restartWalkthroughBtn');
+
+          // 3D Canvas Controls & Floating HUD
+          this.btnResetCamera = document.getElementById('btnResetCamera');
+          this.btnAutoRotate = document.getElementById('btnAutoRotate');
+          this.chkShowShiftVectors = document.getElementById('chkShowShiftVectors');
+          this.chkShowAllLabels = document.getElementById('chkShowAllLabels');
+
+          this.inspectorHud = document.getElementById('inspectorHud');
+          this.hudTokenName = document.getElementById('hudTokenName');
+          this.hudTokenId = document.getElementById('hudTokenId');
+          this.hudModeBadge = document.getElementById('hudModeBadge');
+          this.hudClusterBadge = document.getElementById('hudClusterBadge');
+          this.hudCoordX = document.getElementById('hudCoordX');
+          this.hudCoordY = document.getElementById('hudCoordY');
+          this.hudCoordZ = document.getElementById('hudCoordZ');
+          this.hudNeighborList = document.getElementById('hudNeighborList');
+          this.hudCloseBtn = document.getElementById('hudCloseBtn');
+        }
+
+        _bindUIEvents() {
+          // Guided Stepper Tab Navigation
+          this.stepperTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              const step = Number(tab.getAttribute('data-step'));
+              this.goToStep(step);
+            });
+          });
+
+          // Step Navigation Buttons
+          if (this.prevBtn2) this.prevBtn2.addEventListener('click', () => this.goToStep(1));
+          if (this.nextBtn2) this.nextBtn2.addEventListener('click', () => this.goToStep(3));
+          if (this.prevBtn3) this.prevBtn3.addEventListener('click', () => this.goToStep(2));
+          if (this.nextBtn3) this.nextBtn3.addEventListener('click', () => this.goToStep(4));
+          if (this.prevBtn4) this.prevBtn4.addEventListener('click', () => this.goToStep(3));
+          if (this.nextBtn4) this.nextBtn4.addEventListener('click', () => this.goToStep(5));
+          if (this.prevBtn5) this.prevBtn5.addEventListener('click', () => this.goToStep(4));
+          if (this.restartWalkthroughBtn) this.restartWalkthroughBtn.addEventListener('click', () => this.goToStep(1));
+
+          // Stage 1 Presets
+          document.querySelectorAll('[data-preset]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+
+              const key = btn.getAttribute('data-preset');
+              this.currentPreset = key;
+              const preset = PRESETS[key];
+
+              this.corpusInput.value = preset.corpus;
+              this.ctxBtnA.textContent = preset.ctxALabel;
+              this.ctxBtnB.textContent = preset.ctxBLabel;
+
+              if (key === 'empty') {
+                this.corpusInput.focus();
+              } else {
+                this.querySentenceInput.value = preset.ctxA;
+                this.ctxBtnA.classList.add('active');
+                this.ctxBtnB.classList.remove('active');
+              }
+
+              this._runFullPipeline(true);
+            });
+          });
+
+          // Stage 1 Primary Action: Build Dictionary & Advance to Step 2
+          this.buildPipelineBtn.addEventListener('click', () => {
+            this._runFullPipeline(true);
+            this.goToStep(2);
+          });
+
+          // Stage 2 Search & Special Tokens Toggle
+          this.vocabSearchInput.addEventListener('input', () => {
+            this._renderVocabTable();
+          });
+
+          this.showSpecialTokensToggle.addEventListener('change', (e) => {
+            this.showSpecialTokens = e.target.checked;
+            this._renderVocabTable();
+          });
+
+          // Stage 4 Context Presets
+          this.ctxBtnA.addEventListener('click', () => {
+            const preset = PRESETS[this.currentPreset] || PRESETS.bank;
+            this.querySentenceInput.value = preset.ctxA;
+            this.ctxBtnA.classList.add('active');
+            this.ctxBtnB.classList.remove('active');
+            this._updateQueryAndEmbeddings(true);
+          });
+
+          this.ctxBtnB.addEventListener('click', () => {
+            const preset = PRESETS[this.currentPreset] || PRESETS.bank;
+            this.querySentenceInput.value = preset.ctxB;
+            this.ctxBtnB.classList.add('active');
+            this.ctxBtnA.classList.remove('active');
+            this._updateQueryAndEmbeddings(true);
+          });
+
+          // Stage 4 Real-time Query Input
+          this.querySentenceInput.addEventListener('input', () => {
+            this.ctxBtnA.classList.remove('active');
+            this.ctxBtnB.classList.remove('active');
+            this._updateQueryAndEmbeddings(false);
+          });
+
+          // Stage 5 Static vs Contextual Mode Toggle
+          this.btnStaticMode.addEventListener('click', () => {
+            this._setEmbeddingMode('static');
+          });
+
+          this.btnContextualMode.addEventListener('click', () => {
+            this._setEmbeddingMode('contextual');
+          });
+
+          // 3D Canvas Controls
+          this.btnResetCamera.addEventListener('click', () => {
+            this.scene3D.resetCamera();
+          });
+
+          this.btnAutoRotate.addEventListener('click', () => {
+            this.scene3D.autoRotate = !this.scene3D.autoRotate;
+            this.btnAutoRotate.innerHTML = `
+              <span class="hud-status-dot ${this.scene3D.autoRotate ? 'on' : ''}"></span>
+              <span>Auto-Rotate: ${this.scene3D.autoRotate ? 'ON' : 'OFF'}</span>
+            `;
+            this.btnAutoRotate.classList.toggle('active', this.scene3D.autoRotate);
+          });
+
+          this.chkShowShiftVectors.addEventListener('change', (e) => {
+            this.scene3D.showShiftVectors = e.target.checked;
+          });
+
+          this.chkShowAllLabels.addEventListener('change', (e) => {
+            this.scene3D.showAllLabels = e.target.checked;
+          });
+
+          // Inspector HUD close button
+          this.hudCloseBtn.addEventListener('click', () => {
+            this.inspectedNode = null;
+            this.scene3D.selectedNodeKey = null;
+            this.inspectorHud.classList.add('hidden');
+          });
+        }
+
+        goToStep(stepNumber) {
+          this.currentStep = stepNumber;
+
+          // Switch views
+          this.stepViews.forEach((view, idx) => {
+            view.classList.toggle('active', idx + 1 === stepNumber);
+          });
+
+          // Update stepper tabs
+          this.stepperTabs.forEach((tab, idx) => {
+            const step = idx + 1;
+            tab.classList.toggle('active', step === stepNumber);
+            tab.classList.toggle('completed', step < stepNumber);
+          });
+
+          // Smooth scroll to top of workspace
+          if (this.guidedWorkspace) {
+            this.guidedWorkspace.scrollTop = 0;
+          }
+        }
+
+        _runFullPipeline(autoFocusPolysemy = false) {
+          const corpusText = this.corpusInput.value;
+          const { vocabList, tokenizedCorpus } = this.tokenizer.buildFromCorpus(corpusText);
+
+          const sCount = tokenizedCorpus.length;
+          this.corpusLineCount.textContent = `${sCount} Sentence${sCount === 1 ? '' : 's'}`;
+
+          const staticVectors = this.embedder.computeStaticEmbeddings(vocabList, tokenizedCorpus);
+
+          const actualWordsCount = vocabList.filter(v => !v.isSpecial).length;
+          this.vocabSizeBadge.textContent = `${actualWordsCount} Unique Words`;
+
+          const totalCorpusToks = tokenizedCorpus.reduce((acc, s) => acc + s.tokens.length, 0);
+          this.totalCorpusTokensBadge.textContent = `${totalCorpusToks} Tokens`;
+
+          this._renderVocabTable();
+          this._renderCorpusTokens();
+
+          this._updateQueryAndEmbeddings(autoFocusPolysemy);
+        }
+
+        _updateQueryAndEmbeddings(autoFocusPolysemy = false) {
+          const queryText = this.querySentenceInput.value;
+          const queryTokens = this.tokenizer.tokenizeQuery(queryText);
+
+          const unkCount = queryTokens.filter(t => t.isUnk).length;
+          this.queryTokenCountBadge.textContent = `${queryTokens.length} Tokens`;
+          this.unkCounterLabel.textContent = unkCount > 0 ? `${unkCount} new word ([UNK])` : '';
+
+          this.contextualSequence = this.embedder.computeContextualSequence(queryTokens);
+
+          if (autoFocusPolysemy && this.contextualSequence.length > 0) {
+            const polyIdx = this.contextualSequence.findIndex(
+              t => t.norm === 'bank' || t.norm === 'apple'
+            );
+            if (polyIdx !== -1) {
+              this.selectedQueryIndex = polyIdx;
+            } else {
+              const contentIdx = this.contextualSequence.findIndex(t => !STOPWORDS.has(t.norm));
+              this.selectedQueryIndex = contentIdx !== -1 ? contentIdx : 0;
+            }
+          } else if (this.selectedQueryIndex >= this.contextualSequence.length) {
+            this.selectedQueryIndex = Math.max(0, this.contextualSequence.length - 1);
+          }
+
+          this.scene3D.updateSceneData(
+            this.tokenizer.vocabList,
+            this.embedder.staticVectors,
+            this.contextualSequence
+          );
+
+          if (this.contextualSequence.length > 0) {
+            this.scene3D.selectedNodeKey = `query:${this.selectedQueryIndex}`;
+          }
+
+          this._renderQueryTokens();
+          this._renderAttentionBreakdown();
+          this._updateExplanationBanner();
+
+          // Only show HUD if a node is actively selected
+          if (this.inspectedNode) {
+            this._updateInspectorHUD(this.inspectedNode);
+          }
+        }
+
+        _setEmbeddingMode(mode) {
+          this.embeddingMode = mode;
+          this.scene3D.setMode(mode);
+
+          const isStatic = mode === 'static';
+          this.btnStaticMode.classList.toggle('active', isStatic);
+          this.btnContextualMode.classList.toggle('active', !isStatic);
+          this.btnStaticMode.classList.toggle('active-static', isStatic);
+          this.btnContextualMode.classList.toggle('active-contextual', !isStatic);
+
+          this.embeddingModeBadge.textContent = isStatic ? 'Static (Fixed)' : 'Contextual (Context-Aware)';
+          this.embeddingModeBadge.className = `step-meta-badge ${isStatic ? 'badge-static' : 'badge-contextual'}`;
+
+          this._updateExplanationBanner();
+
+          if (this.inspectedNode) {
+            this._updateInspectorHUD(this.inspectedNode);
+          }
+        }
+
+        _updateExplanationBanner() {
+          const isStatic = this.embeddingMode === 'static';
+          const focusWord = this.currentPreset === 'apple' ? 'apple' : 'bank';
+          const clusterName = this.currentPreset === 'apple' ? 'Fruit vs. Tech' : 'River vs. Money';
+
+          if (isStatic) {
+            this.modeExplanationBanner.className = 'guided-explanation-banner static-mode';
+            this.modeExplanationBanner.innerHTML = `
+              <div class="explanation-icon">📦</div>
+              <div class="explanation-text">
+                <strong>Fixed Meaning (Word2Vec Lookup):</strong> Every word has only one frozen coordinate. Without surrounding context, <strong>"${focusWord}"</strong> is stranded halfway between clusters in 3D space.
+              </div>
+            `;
+          } else {
+            this.modeExplanationBanner.className = 'guided-explanation-banner contextual-mode';
+            this.modeExplanationBanner.innerHTML = `
+              <div class="explanation-icon">✨</div>
+              <div class="explanation-text">
+                <strong>Context-Aware (Transformer Self-Attention):</strong> The AI reads surrounding words and physically shifts <strong>"${focusWord}"</strong> in real time toward its active meaning cluster in 3D space!
+              </div>
+            `;
+          }
+        }
+
+        _renderVocabTable() {
+          const filter = (this.vocabSearchInput.value || '').trim().toLowerCase();
+          const list = this.tokenizer.vocabList;
+
+          const filtered = list.filter(v => {
+            if (!this.showSpecialTokens && v.isSpecial) return false;
+            if (!filter) return true;
+            return v.token.toLowerCase().includes(filter) || String(v.id) === filter.replace('#', '');
+          });
+
+          if (filtered.length === 0) {
+            this.vocabTableBody.innerHTML = `
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic; padding: 10px 0;">No words match "${this._escapeHtml(filter)}"</div>
+            `;
+            return;
+          }
+
+          this.vocabTableBody.innerHTML = filtered.map(item => {
+            const isSpecial = item.isSpecial;
+            const isPoly = item.token === 'bank' || item.token === 'apple';
+            const isSelected = this.inspectedNode && this.inspectedNode.type === 'vocab' && this.inspectedNode.id === item.id;
+
+            return `
+              <button
+                type="button"
+                class="vocab-pill vocab-row ${isSpecial ? 'special-pill' : ''} ${isPoly ? 'poly-pill' : ''} ${isSelected ? 'active' : ''}"
+                data-vocab-id="${item.id}"
+                data-vocab-token="${this._escapeHtml(item.token)}"
+                title="Word: ${this._escapeHtml(item.token)} (ID: #${item.id}${isSpecial ? ', special token' : `, frequency: ${item.freq}`})"
+              >
+                <span>${this._escapeHtml(item.token)}</span>
+                <span class="vocab-id-tag">#${item.id}</span>
+              </button>
+            `;
+          }).join('');
+
+          // Clicking a word pill selects it in the 3D space and displays the HUD card
+          this.vocabTableBody.querySelectorAll('.vocab-row').forEach(row => {
+            row.addEventListener('click', () => {
+              const id = Number(row.getAttribute('data-vocab-id'));
+              const token = row.getAttribute('data-vocab-token');
+              const vec = this.embedder.staticVectors.get(token) || [0, 0, 0];
+              this.scene3D.selectedNodeKey = `vocab:${id}`;
+              this.inspectedNode = {
+                type: 'vocab',
+                id,
+                token,
+                vec
+              };
+              this.vocabTableBody.querySelectorAll('.vocab-row').forEach(r => r.classList.remove('active'));
+              row.classList.add('active');
+              this._updateInspectorHUD(this.inspectedNode);
+            });
+          });
+        }
+
+        _renderCorpusTokens() {
+          const tokenizedCorpus = this.tokenizer.tokenizedCorpus;
+          if (tokenizedCorpus.length === 0) {
+            this.corpusTokensContainer.innerHTML = `
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic;">No training sentences available.</div>
+            `;
+            return;
+          }
+
+          this.corpusTokensContainer.innerHTML = tokenizedCorpus.map((sent, idx) => {
+            const chipsHtml = sent.tokens.map(tok => {
+              const isPoly = tok.norm === 'bank' || tok.norm === 'apple';
+              return `
+                <div class="token-id-block ${isPoly ? 'polysemy-block' : ''}">
+                  <span>${this._escapeHtml(tok.surface)}</span>
+                  <span class="block-id">#${tok.id}</span>
+                </div>
+              `;
+            }).join('');
+
+            return `
+              <div class="sentence-block-card">
+                <div class="sentence-meta-row">
+                  <span style="font-weight: 600; color: var(--text-primary);">Sentence #${idx + 1}</span>
+                  <span>${sent.tokens.length} words mapped to IDs</span>
+                </div>
+                <div class="sentence-chips-row">
+                  ${chipsHtml}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        _renderQueryTokens() {
+          if (this.contextualSequence.length === 0) {
+            this.queryTokensContainer.innerHTML = `
+              <span style="font-size: 12px; color: var(--text-muted);">Type a sentence above to see live token chips...</span>
+            `;
+            return;
+          }
+
+          this.queryTokensContainer.innerHTML = this.contextualSequence.map((tok, idx) => {
+            const isActive = idx === this.selectedQueryIndex;
+            const unkClass = tok.isUnk ? 'unk-chip' : '';
+            const activeClass = isActive ? 'active-token' : '';
+            const label = tok.isUnk ? `${tok.surface} → [UNK]` : tok.surface;
+            const title = tok.isUnk
+              ? `New word not in training dictionary → assigned #1 ([UNK])`
+              : `Click to inspect self-attention & 3D vector for "${tok.surface}"`;
+
+            return `
+              <button
+                type="button"
+                class="query-chip ${unkClass} ${activeClass}"
+                data-q-index="${idx}"
+                title="${title}"
+              >
+                <span>${this._escapeHtml(label)}</span>
+                <span style="color: var(--text-muted); font-size: 10px;">#${tok.id}</span>
+              </button>
+            `;
+          }).join('');
+
+          this.queryTokensContainer.querySelectorAll('[data-q-index]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              this.selectedQueryIndex = Number(btn.getAttribute('data-q-index'));
+              this.scene3D.selectedNodeKey = `query:${this.selectedQueryIndex}`;
+              const qItem = this.contextualSequence[this.selectedQueryIndex];
+              this.inspectedNode = {
+                type: 'query',
+                position: qItem.position,
+                surface: qItem.surface,
+                id: qItem.id,
+                vec: this.embeddingMode === 'contextual' ? qItem.contextualVec : qItem.staticVec
+              };
+              this._renderQueryTokens();
+              this._renderAttentionBreakdown();
+              this._updateInspectorHUD(this.inspectedNode);
+            });
+          });
+        }
+
+        _renderAttentionBreakdown() {
+          if (this.contextualSequence.length === 0) {
+            this.attnSelectedTokenBadge.textContent = 'Target: None';
+            this.attentionBarsContainer.innerHTML = `
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic;">No query tokens available.</div>
+            `;
+            return;
+          }
+
+          const target = this.contextualSequence[this.selectedQueryIndex] || this.contextualSequence[0];
+          this.attnSelectedTokenBadge.textContent = `Target: "${target.surface}" (#${target.id})`;
+
+          const sortedWeights = [...target.attentionWeights].sort((a, b) => b.weight - a.weight);
+
+          this.attentionBarsContainer.innerHTML = sortedWeights.map(item => {
+            const pct = (item.weight * 100).toFixed(1);
+            const isSelf = item.targetIndex === target.position;
+            const label = isSelf ? `${item.token} (self)` : item.token;
+            return `
+              <div class="attn-bar-row">
+                <span class="attn-bar-word" title="${this._escapeHtml(label)}">${this._escapeHtml(label)}</span>
+                <div class="attn-bar-track">
+                  <div class="attn-bar-fill" style="width: ${Math.max(2, item.weight * 100)}%;"></div>
+                </div>
+                <span class="attn-bar-pct">${pct}%</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        handleNodeSelect(hit) {
+          if (hit.type === 'query') {
+            this.selectedQueryIndex = hit.position;
+            this.inspectedNode = hit;
+            this._renderQueryTokens();
+            this._renderAttentionBreakdown();
+            this._updateInspectorHUD(hit);
+          } else {
+            this.inspectedNode = hit;
+            this._updateInspectorHUD(hit);
+          }
+        }
+
+        _getMeaningCluster(token, vec, mode) {
+          const x = vec[0];
+          const y = vec[1];
+          const t = (token || '').toLowerCase();
+
+          if (t === 'bank') {
+            if (mode === 'contextual') {
+              if (x < -0.1) return '🌿 Nature & River (Water Flow) Cluster';
+              if (x > 0.1) return '💳 Finance & Money (Banking) Cluster';
+            }
+            return '⚖️ Ambiguous Bridge (Context Needed)';
+          }
+          if (t === 'apple') {
+            if (mode === 'contextual') {
+              if (x < -0.1) return '🍎 Fresh Orchard Fruit Cluster';
+              if (x > 0.1) return '💻 Technology & Laptop Cluster';
+            }
+            return '⚖️ Ambiguous Bridge (Context Needed)';
+          }
+
+          if (x < -0.2 && y > 0.1) {
+            return '🌿 Nature, Water & Outdoors Cluster';
+          } else if (x > 0.2 && y < -0.1) {
+            return '💳 Finance, Banking & Money Cluster';
+          } else if (Math.abs(x) < 0.25 && Math.abs(y) < 0.25) {
+            return '🔗 Semantic Neutral Bridge';
+          } else if (x < 0) {
+            return '🍃 Nature & Environment Domain';
+          } else {
+            return '💼 Commerce & Technology Domain';
+          }
+        }
+
+        _updateInspectorHUD(explicitNode = null) {
+          if (!explicitNode) {
+            this.inspectorHud.classList.add('hidden');
+            return;
+          }
+
+          this.inspectorHud.classList.remove('hidden');
+
+          let activeToken = '[UNK]';
+          let activeId = 1;
+          let activeVec = [0, 0, 0];
+          let activeModeLabel = this.embeddingMode === 'contextual' ? 'Contextual' : 'Static';
+          let isQuery = false;
+          let queryPos = -1;
+
+          if (explicitNode.type === 'vocab') {
+            activeToken = explicitNode.token;
+            activeId = explicitNode.id;
+            activeVec = this.embedder.staticVectors.get(explicitNode.token) || [0, 0, 0];
+            activeModeLabel = 'Static Vocab';
+          } else if (explicitNode.type === 'query') {
+            activeToken = explicitNode.surface;
+            activeId = explicitNode.id;
+            activeVec = this.embeddingMode === 'contextual'
+              ? (this.contextualSequence[explicitNode.position] ? this.contextualSequence[explicitNode.position].contextualVec : explicitNode.vec)
+              : (this.contextualSequence[explicitNode.position] ? this.contextualSequence[explicitNode.position].staticVec : explicitNode.vec);
+            isQuery = true;
+            queryPos = explicitNode.position;
+          }
+
+          this.hudTokenName.textContent = `"${activeToken}"`;
+          this.hudTokenId.textContent = `#${activeId}`;
+          this.hudModeBadge.textContent = activeModeLabel;
+          this.hudModeBadge.className = `hud-mode-badge ${
+            activeModeLabel === 'Contextual' ? 'hud-mode-contextual' : 'hud-mode-static'
+          }`;
+
+          this.hudClusterBadge.textContent = this._getMeaningCluster(activeToken, activeVec, this.embeddingMode);
+
+          this.hudCoordX.textContent = activeVec[0].toFixed(3);
+          this.hudCoordY.textContent = activeVec[1].toFixed(3);
+          this.hudCoordZ.textContent = activeVec[2].toFixed(3);
+
+          const candidates = [];
+          const seenLabels = new Set();
+
+          for (const qn of this.contextualSequence) {
+            if (isQuery && qn.position === queryPos) continue;
+            const vec = this.embeddingMode === 'contextual' ? qn.contextualVec : qn.staticVec;
+            const key = qn.norm;
+            if (!seenLabels.has(key) && key !== activeToken.toLowerCase()) {
+              seenLabels.add(key);
+              candidates.push({
+                label: qn.surface,
+                id: qn.id,
+                sim: cosineSimilarity(activeVec, vec)
+              });
+            }
+          }
+
+          for (const v of this.tokenizer.vocabList) {
+            if (v.isSpecial) continue;
+            if (v.token === activeToken.toLowerCase() || seenLabels.has(v.token)) continue;
+            const vec = this.embedder.staticVectors.get(v.token);
+            if (!vec) continue;
+            seenLabels.add(v.token);
+            candidates.push({
+              label: v.token,
+              id: v.id,
+              sim: cosineSimilarity(activeVec, vec)
+            });
+          }
+
+          candidates.sort((a, b) => b.sim - a.sim);
+          const top3 = candidates.slice(0, 3);
+
+          if (top3.length === 0) {
+            this.hudNeighborList.innerHTML = `
+              <div class="neighbor-item" style="color: var(--text-muted);">Build corpus to compute closest words</div>
+            `;
+          } else {
+            this.hudNeighborList.innerHTML = top3.map(n => `
+              <div class="neighbor-item">
+                <span>${this._escapeHtml(n.label)} <span style="color: var(--text-muted); font-size: 10px;">#${n.id}</span></span>
+                <span class="neighbor-sim">${n.sim.toFixed(3)}</span>
+              </div>
+            `).join('');
+          }
+        }
+
+        _startRenderLoop() {
+          const tick = () => {
+            this.scene3D.renderFrame();
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+
+        _escapeHtml(str) {
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        window.llmExplorer = new PipelineApp();
+      });
+    })();
+  </script>
+</body>
+</html>

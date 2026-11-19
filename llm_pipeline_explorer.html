@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LLM Pipeline Explorer — Interactive NLP & 3D Vector Space Studio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LLM Pipeline Explorer — Visual Step-by-Step Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+
     /* ==========================================================================
-       1. DESIGN TOKENS & STUDIO THEME VARIABLES
+       1. HIGH-CRAFT DESIGN SYSTEM (LINEAR & VERCEL INSPIRED)
        ========================================================================== */
     :root {
-      --bg-primary: #0b0f19;
-      --bg-secondary: #0f1524;
-      --bg-card: #131a2a;
-      --bg-card-hover: #182136;
-      --bg-input: #0a0e18;
-      --border-subtle: #1e293b;
-      --border-strong: #334155;
+      --bg-app: #09090B;
+      --bg-surface: #121215;
+      --bg-surface-elevated: #18181D;
+      --bg-surface-hover: #1E1E24;
+      --bg-input: #0D0D10;
+      --bg-input-focus: #141419;
 
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --border-active: rgba(255, 255, 255, 0.28);
 
-      --accent-cyan: #38bdf8;
-      --accent-cyan-dim: rgba(56, 189, 248, 0.14);
-      --accent-indigo: #818cf8;
-      --accent-indigo-dim: rgba(129, 140, 248, 0.15);
-      --accent-emerald: #34d399;
-      --accent-emerald-dim: rgba(52, 211, 153, 0.14);
-      --accent-amber: #fbbf24;
-      --accent-amber-dim: rgba(251, 191, 36, 0.15);
-      --accent-rose: #fb7185;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --text-dim: #52525B;
 
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      --accent-primary: #6366F1;
+      --accent-primary-subtle: rgba(99, 102, 241, 0.12);
+      --accent-emerald: #10B981;
+      --accent-emerald-subtle: rgba(16, 185, 129, 0.12);
+      --accent-amber: #F59E0B;
+      --accent-amber-subtle: rgba(245, 158, 11, 0.12);
+      --accent-indigo: #818CF8;
+      --accent-cyan: #38BDF8;
+
+      --glass-bg: rgba(18, 18, 22, 0.82);
+      --glass-bg-subtle: rgba(18, 18, 22, 0.65);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --glass-blur: blur(16px);
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
 
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 14px;
-      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.65);
-      --shadow-glow-cyan: 0 0 20px rgba(56, 189, 248, 0.22);
+      --radius-full: 9999px;
+
+      --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+      --shadow-glass: 0 12px 36px rgba(0, 0, 0, 0.55);
     }
 
-    /* ==========================================================================
-       2. GLOBAL RESET & BASE LAYOUT
-       ========================================================================== */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -52,849 +63,857 @@
 
     html {
       scroll-behavior: smooth;
-      background-color: var(--bg-primary);
+      background-color: var(--bg-app);
       color: var(--text-primary);
       font-family: var(--font-sans);
       font-size: 14px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.06), transparent 35%),
-        radial-gradient(circle at 85% 20%, rgba(129, 140, 248, 0.06), transparent 40%),
-        var(--bg-primary);
+      background-color: var(--bg-app);
+      background-image: radial-gradient(circle at 40% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
       overflow-x: hidden;
     }
 
-    /* Custom Scrollbars */
+    /* Minimal Custom Scrollbars */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: var(--bg-primary);
+      background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: #273549;
-      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-full);
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #3b4f6b;
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
     /* ==========================================================================
-       3. TOP HEADER & STEP-BY-STEP PROGRESS BAR
+       2. TOP HEADER
        ========================================================================== */
-    .studio-header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: rgba(11, 15, 25, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+    .app-header {
+      height: 56px;
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 20px;
-    }
-
-    .header-inner {
-      max-width: 1680px;
-      margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      padding: 0 24px;
+      z-index: 40;
+      flex-shrink: 0;
     }
 
-    .brand {
+    .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .brand-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.25));
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      display: grid;
-      place-items: center;
-      box-shadow: var(--shadow-glow-cyan);
-      flex-shrink: 0;
-    }
-
-    .brand-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: var(--accent-cyan-dim);
-      color: var(--accent-cyan);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .brand-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    /* Step-by-step progress stepper */
-    .pipeline-stepper {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 2px 0;
-      max-width: 100%;
-    }
-
-    .step-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 11px;
-      border-radius: 999px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-
-    .step-pill:hover {
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-      background: var(--bg-card-hover);
-    }
-
-    .step-pill.completed {
-      border-color: rgba(52, 211, 153, 0.35);
-      color: var(--text-primary);
-    }
-
-    .step-pill.completed .step-num {
-      background: var(--accent-emerald-dim);
-      color: var(--accent-emerald);
-      border-color: rgba(52, 211, 153, 0.45);
-    }
-
-    .step-pill.active {
-      border-color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--text-primary);
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.18);
-    }
-
-    .step-pill.active .step-num {
-      background: var(--accent-cyan);
-      color: #06101d;
-      border-color: var(--accent-cyan);
-      font-weight: 700;
-    }
-
-    .step-num {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      background: rgba(148, 163, 184, 0.12);
-      border: 1px solid var(--border-strong);
-    }
-
-    .step-connector {
-      width: 12px;
-      height: 1px;
-      background: var(--border-strong);
-      flex-shrink: 0;
-    }
-
-    /* ==========================================================================
-       4. MAIN 2-COLUMN RESPONSIVE WORKSPACE
-       ========================================================================== */
-    .workspace-grid {
-      max-width: 1680px;
-      margin: 0 auto;
-      padding: 18px 20px 28px;
-      display: grid;
-      grid-template-columns: minmax(410px, 500px) 1fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .pipeline-column {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .viewport-column {
-      position: sticky;
-      top: 76px;
-      height: calc(100vh - 96px);
-      min-height: 580px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    @media (max-width: 1080px) {
-      .workspace-grid {
-        grid-template-columns: 1fr;
-      }
-      .viewport-column {
-        position: static;
-        height: 620px;
-        min-height: 520px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .studio-header {
-        padding: 10px 14px;
-      }
-      .workspace-grid {
-        padding: 12px 14px 24px;
-      }
-      .viewport-column {
-        height: 540px;
-        min-height: 460px;
-      }
-    }
-
-    /* ==========================================================================
-       5. PIPELINE STAGE CARDS (STAGES 1 TO 5)
-       ========================================================================== */
-    .stage-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      box-shadow: var(--shadow-card);
-      transition: border-color 0.25s ease, transform 0.2s ease;
-    }
-
-    .stage-card:hover {
-      border-color: #29374f;
-    }
-
-    .stage-card.highlight-pulse {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2), var(--shadow-card);
-    }
-
-    .stage-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .stage-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .stage-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
+    .app-logo {
+      width: 28px;
+      height: 28px;
       border-radius: var(--radius-sm);
-      letter-spacing: 0.04em;
-      flex-shrink: 0;
-    }
-
-    .badge-cyan {
-      background: var(--accent-cyan-dim);
-      color: var(--accent-cyan);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .badge-indigo {
-      background: var(--accent-indigo-dim);
-      color: var(--accent-indigo);
-      border: 1px solid rgba(129, 140, 248, 0.3);
-    }
-
-    .badge-emerald {
-      background: var(--accent-emerald-dim);
-      color: var(--accent-emerald);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-
-    .badge-amber {
-      background: var(--accent-amber-dim);
-      color: var(--accent-amber);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .stage-title {
-      font-size: 14.5px;
-      font-weight: 650;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-    }
-
-    .stage-desc {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    .stage-meta {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-secondary);
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-subtle);
-      padding: 3px 8px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    /* Buttons & Inputs */
-    .preset-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .btn-chip {
-      font-family: var(--font-sans);
-      font-size: 11.5px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 5px 10px;
-      cursor: pointer;
-      transition: all 0.18s ease;
-    }
-
-    .btn-chip:hover {
-      color: var(--text-primary);
-      border-color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.08);
-    }
-
-    .btn-chip.active {
-      color: var(--accent-cyan);
-      border-color: rgba(56, 189, 248, 0.5);
-      background: var(--accent-cyan-dim);
-    }
-
-    .studio-textarea,
-    .studio-input {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      line-height: 1.55;
-      padding: 10px 12px;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .studio-textarea {
-      resize: vertical;
-      min-height: 102px;
-    }
-
-    .studio-textarea:focus,
-    .studio-input:focus {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
-    }
-
-    .btn-primary {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      background: linear-gradient(135deg, #0284c7, #4f46e5);
-      color: #ffffff;
-      font-family: var(--font-sans);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.28);
-      transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      color: var(--accent-cyan);
     }
 
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
-    }
-
-    .btn-primary:active {
-      transform: translateY(1px);
-    }
-
-    /* ==========================================================================
-       6. STAGE 2: VOCABULARY TABLE & SEARCH
-       ========================================================================== */
-    .vocab-toolbar {
+    .app-title-group {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
+      align-items: baseline;
+      gap: 10px;
     }
 
-    .vocab-search {
-      flex: 1;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 6px 10px;
+    .app-title {
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text-primary);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .vocab-search:focus {
-      border-color: var(--accent-indigo);
-    }
-
-    .vocab-table-wrap {
-      max-height: 195px;
-      overflow-y: auto;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      background: var(--bg-input);
-    }
-
-    .vocab-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    .vocab-table th {
-      position: sticky;
-      top: 0;
-      background: #0e1422;
-      color: var(--text-secondary);
-      font-weight: 600;
-      text-align: left;
-      padding: 7px 10px;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      z-index: 2;
-    }
-
-    .vocab-table td {
-      padding: 6px 10px;
-      border-bottom: 1px solid rgba(30, 41, 59, 0.55);
-      font-family: var(--font-mono);
-    }
-
-    .vocab-row {
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .vocab-row:hover {
-      background: rgba(56, 189, 248, 0.08);
-    }
-
-    .vocab-row.selected-row {
-      background: rgba(56, 189, 248, 0.15);
-    }
-
-    .special-token-tag {
-      display: inline-block;
-      padding: 1px 6px;
-      border-radius: 4px;
-      background: var(--accent-indigo-dim);
-      color: var(--accent-indigo);
-      border: 1px solid rgba(129, 140, 248, 0.35);
-      font-weight: 600;
-      font-size: 11px;
-    }
-
-    .freq-bar-cell {
+      letter-spacing: -0.015em;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
-    .freq-bar-bg {
-      flex: 1;
-      height: 5px;
-      background: #1e293b;
-      border-radius: 999px;
-      overflow: hidden;
-      min-width: 40px;
+    .version-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0;
     }
 
-    .freq-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-indigo));
-      border-radius: 999px;
+    .app-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Top Progress Stepper Pills */
+    .guided-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 3px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stepper-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tab-num {
+      width: 17px;
+      height: 17px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.16s;
+    }
+
+    .stepper-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stepper-tab.active {
+      background: #FAFAFA;
+      color: #09090B;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .stepper-tab.active .tab-num {
+      background: #09090B;
+      color: #FAFAFA;
+    }
+
+    .stepper-tab.completed:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .stepper-tab.completed:not(.active) .tab-num {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    .tab-divider {
+      width: 1px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
     }
 
     /* ==========================================================================
-       7. STAGE 3 & 4: TOKEN CHIPS & QUERY SENTENCE
+       3. 2-COLUMN WORKSPACE
        ========================================================================== */
-    .sentence-token-list {
+    .workspace-grid {
+      display: flex;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* LEFT GUIDED WORKSPACE */
+    .guided-workspace {
+      width: 46%;
+      max-width: 560px;
+      min-width: 380px;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 32px 32px 48px 32px;
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-app);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    /* Step Views (Only 1 active at a time!) */
+    .step-view {
+      display: none;
+      flex-direction: column;
+      gap: 22px;
+      animation: fadeInStep 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-view.active {
+      display: flex;
+    }
+
+    @keyframes fadeInStep {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Step Header */
+    .step-header {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 220px;
-      overflow-y: auto;
-      padding-right: 2px;
     }
 
-    .sentence-row {
+    .step-tag-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .step-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-indigo);
+      background: rgba(129, 140, 248, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.22);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+    }
+
+    .step-meta-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .step-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .step-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Card Panels inside Steps */
+    .guided-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* Presets Row */
+    .preset-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preset-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .preset-pill:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .preset-pill.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.22);
+      font-weight: 500;
+    }
+
+    /* Textarea & Inputs */
+    .guided-textarea {
+      width: 100%;
+      min-height: 120px;
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 8px 10px;
-    }
-
-    .sentence-row-label {
+      padding: 12px 14px;
+      color: var(--text-primary);
       font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
+      font-size: 12.5px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
-    .token-chips-wrap {
+    .guided-textarea:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+      background: var(--bg-input-focus);
+    }
+
+    .guided-input {
+      width: 100%;
+      height: 46px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0 16px;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .guided-input:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+      background: var(--bg-input-focus);
+    }
+
+    /* Step Navigation Buttons */
+    .step-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .btn-step-primary {
+      background: #FAFAFA;
+      color: #09090B;
+      border: none;
+      border-radius: var(--radius-md);
+      height: 44px;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      margin-left: auto;
+    }
+
+    .btn-step-primary:hover {
+      background: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-step-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-step-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      height: 44px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-step-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    /* Stage 2: Word Dictionary Pills */
+    .vocab-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vocab-search-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .vocab-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .vocab-search-input {
+      width: 100%;
+      height: 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0 12px 0 34px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .vocab-search-input:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .vocab-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .special-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .special-toggle-label input[type="checkbox"] {
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .guided-vocab-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 2px 0;
+    }
+
+    .vocab-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 11px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      transition: all 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .vocab-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .vocab-pill.active {
+      background: var(--accent-primary-subtle);
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+    }
+
+    .vocab-pill.special-pill {
+      opacity: 0.65;
+      border-style: dashed;
+      color: var(--text-muted);
+    }
+
+    .vocab-pill.poly-pill {
+      border-color: rgba(245, 158, 11, 0.35);
+      background: rgba(245, 158, 11, 0.06);
+      color: #FDE68A;
+    }
+
+    .vocab-id-tag {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    /* Stage 3: Sentence Tokenizer Blocks */
+    .guided-sentences-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .sentence-block-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sentence-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .sentence-chips-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
     }
 
-    .token-chip {
+    .token-id-block {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-      background: #131c2e;
-      border: 1px solid var(--border-strong);
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--text-primary);
-      transition: all 0.16s ease;
     }
 
-    .token-chip .tok-id {
+    .token-id-block .block-id {
+      color: var(--text-muted);
       font-size: 10px;
-      padding: 1px 5px;
-      border-radius: 4px;
-      background: rgba(56, 189, 248, 0.14);
-      color: var(--accent-cyan);
-      font-weight: 600;
     }
 
-    .token-chip.polysemy-highlight {
-      border-color: rgba(251, 191, 36, 0.55);
-      background: rgba(251, 191, 36, 0.08);
+    .token-id-block.polysemy-block {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+      color: #FDE68A;
     }
 
-    .token-chip.unk-chip {
-      border-color: rgba(251, 191, 36, 0.65);
-      background: rgba(251, 191, 36, 0.12);
-      color: var(--accent-amber);
+    /* Stage 4: Test Your Own Sentence */
+    .query-stream-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .token-chip.unk-chip .tok-id {
-      background: rgba(251, 191, 36, 0.22);
-      color: var(--accent-amber);
+    .query-stream-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
-    .token-chip.interactive-query-chip {
+    .guided-query-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .query-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.14s;
     }
 
-    .token-chip.interactive-query-chip:hover {
-      border-color: var(--accent-cyan);
+    .query-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-strong);
       transform: translateY(-1px);
     }
 
-    .token-chip.interactive-query-chip.active-token {
+    .query-chip.active-token {
+      background: var(--accent-emerald-subtle);
       border-color: var(--accent-emerald);
-      background: rgba(52, 211, 153, 0.15);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.22);
+      color: var(--text-primary);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+      font-weight: 600;
     }
 
-    .token-chip.interactive-query-chip.active-token .tok-id {
-      background: var(--accent-emerald);
-      color: #051b11;
+    .query-chip.unk-chip {
+      background: var(--accent-amber-subtle);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: var(--accent-amber);
     }
 
-    .query-tokens-box {
-      margin-top: 10px;
-      padding: 10px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
+    .query-hint {
+      font-size: 11.5px;
+      color: var(--text-dim);
     }
 
-    .query-tokens-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-bottom: 7px;
-    }
-
-    /* ==========================================================================
-       8. STAGE 5: EMBEDDING MODE TOGGLE & SELF-ATTENTION BREAKDOWN
-       ========================================================================== */
-    .mode-toggle-grid {
+    /* Stage 5: Segmented Switch & Plain-English Explanation */
+    .guided-segmented-switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .mode-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 3px;
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
+      gap: 4px;
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+
+    .seg-choice {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       cursor: pointer;
-      text-align: left;
-      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .mode-btn:hover {
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-    }
-
-    .mode-btn.active-static {
-      background: rgba(129, 140, 248, 0.14);
-      border-color: var(--accent-indigo);
-      color: var(--text-primary);
-      box-shadow: 0 0 18px rgba(129, 140, 248, 0.18);
-    }
-
-    .mode-btn.active-contextual {
-      background: rgba(52, 211, 153, 0.14);
-      border-color: var(--accent-emerald);
-      color: var(--text-primary);
-      box-shadow: 0 0 18px rgba(52, 211, 153, 0.18);
-    }
-
-    .mode-btn-title {
-      font-size: 12.5px;
-      font-weight: 650;
+    .seg-choice-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .mode-btn-sub {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--text-secondary);
+    .seg-choice-sub {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
-    .attention-panel {
-      margin-top: 12px;
-      padding: 11px;
+    .seg-choice:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .seg-choice.active {
+      background: var(--bg-surface-elevated);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .seg-choice.active .seg-choice-title {
+      color: var(--text-primary);
+    }
+
+    .seg-choice.active.active-contextual .seg-choice-title {
+      color: var(--accent-emerald);
+    }
+
+    .seg-choice.active.active-static .seg-choice-title {
+      color: var(--accent-indigo);
+    }
+
+    /* 1-Sentence Plain-English Explanation Banner */
+    .guided-explanation-banner {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
       border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+
+    .guided-explanation-banner.static-mode {
+      background: rgba(129, 140, 248, 0.08);
+      border-color: rgba(129, 140, 248, 0.22);
+    }
+
+    .explanation-icon {
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Self-Attention Influence Breakdown */
+    .guided-attention-panel {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .attention-panel-header {
+    .attn-header {
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 11.5px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
-    .attention-target-badge {
-      font-family: var(--font-mono);
+    .attn-target-badge {
       font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: var(--accent-emerald-dim);
+      font-family: var(--font-mono);
       color: var(--accent-emerald);
-      border: 1px solid rgba(52, 211, 153, 0.35);
+      background: var(--accent-emerald-subtle);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
     }
 
-    .attention-bars {
+    .guided-attention-bars {
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-    }
-
-    .attn-row {
-      display: grid;
-      grid-template-columns: 88px 1fr 46px;
-      align-items: center;
       gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 11px;
+      max-height: 150px;
+      overflow-y: auto;
     }
 
-    .attn-word {
-      color: var(--text-primary);
+    .attn-bar-row {
+      display: grid;
+      grid-template-columns: 85px 1fr 45px;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+    }
+
+    .attn-bar-word {
+      color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .attn-track {
-      height: 7px;
-      background: #162033;
-      border-radius: 999px;
+    .attn-bar-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
       overflow: hidden;
     }
 
-    .attn-fill {
+    .attn-bar-fill {
       height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-emerald));
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #10B981, #34D399);
+      border-radius: var(--radius-full);
+      transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .attn-pct {
+    .attn-bar-pct {
+      color: var(--text-muted);
       text-align: right;
-      color: var(--text-secondary);
+      font-size: 10.5px;
     }
 
     /* ==========================================================================
-       9. STAGE 6: INTERACTIVE 3D VECTOR SPACE VIEWPORT & HUD
+       4. RIGHT COLUMN: 3D VECTOR SPACE CANVAS
        ========================================================================== */
-    .viewport-card {
+    .viewport-column {
       flex: 1;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      height: 100%;
       position: relative;
-    }
-
-    .viewport-topbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 16px;
-      background: rgba(15, 21, 36, 0.9);
-      border-bottom: 1px solid var(--border-subtle);
-      z-index: 5;
-    }
-
-    .viewport-controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ctrl-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 11.5px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.16s ease;
-    }
-
-    .ctrl-btn:hover {
-      color: var(--text-primary);
-      border-color: var(--border-strong);
-      background: var(--bg-card-hover);
-    }
-
-    .ctrl-btn.active {
-      color: var(--accent-cyan);
-      border-color: rgba(56, 189, 248, 0.5);
-      background: var(--accent-cyan-dim);
-    }
-
-    .ctrl-checkbox {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 11.5px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .ctrl-checkbox input {
-      accent-color: var(--accent-emerald);
-      cursor: pointer;
+      background: var(--bg-app);
+      overflow: hidden;
     }
 
     .canvas-stage {
-      position: relative;
-      flex: 1;
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.35) 0%, rgba(11, 15, 25, 0.96) 100%);
       overflow: hidden;
-      touch-action: none;
     }
 
     #vectorCanvas {
@@ -908,77 +927,158 @@
       cursor: grabbing;
     }
 
-    /* Legend Overlay (Bottom Left of Canvas) */
+    /* Floating Glass HUD Elements on 3D Canvas */
+    .hud-floating-bar {
+      position: absolute;
+      z-index: 20;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-full);
+      padding: 4px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .hud-top-left {
+      top: 16px;
+      left: 16px;
+    }
+
+    .hud-pill-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .hud-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .hud-pill-btn.active {
+      color: var(--text-primary);
+    }
+
+    .hud-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--text-muted);
+      transition: background-color 0.2s;
+    }
+
+    .hud-status-dot.on {
+      background: var(--accent-emerald);
+      box-shadow: 0 0 6px var(--accent-emerald);
+    }
+
+    .hud-bar-divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0 2px;
+    }
+
+    .hud-pill-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hud-pill-check input[type="checkbox"] {
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    /* Bottom-Left Simple 2-Color Legend */
     .canvas-legend {
       position: absolute;
-      left: 14px;
-      bottom: 14px;
-      background: rgba(11, 15, 25, 0.84);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 9px 12px;
+      bottom: 16px;
+      left: 16px;
+      z-index: 20;
+      background: var(--glass-bg-subtle);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
       display: flex;
-      flex-direction: column;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--text-secondary);
-      pointer-events: none;
-      z-index: 4;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
     }
 
     .legend-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .dot-query {
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    .dot-vocab {
+      background: var(--accent-indigo);
+      opacity: 0.85;
     }
 
     .legend-line {
-      width: 16px;
-      height: 0;
+      width: 14px;
+      height: 2px;
       border-top: 2px dashed var(--accent-amber);
-      flex-shrink: 0;
     }
 
-    .camera-hint {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--text-muted);
-      background: rgba(11, 15, 25, 0.72);
-      border: 1px solid rgba(30, 41, 59, 0.7);
-      padding: 4px 9px;
-      border-radius: 999px;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    /* Floating Node Inspector HUD Card (Top Right of Canvas) */
+    /* Bottom-Right Floating Inspector Card (ONLY visible when a node is clicked!) */
     .inspector-hud {
       position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 268px;
-      max-width: calc(100% - 28px);
-      background: rgba(15, 22, 38, 0.9);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
-      z-index: 6;
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      bottom: 16px;
+      right: 16px;
+      z-index: 25;
+      width: 250px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-glass);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: auto;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .inspector-hud.hidden {
+      display: none !important;
     }
 
     .hud-header {
@@ -986,85 +1086,129 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid var(--border-subtle);
     }
 
     .hud-token-title {
-      font-family: var(--font-mono);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    #hudTokenName {
       font-size: 14px;
       font-weight: 700;
       color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-family: var(--font-mono);
     }
 
     .hud-id-pill {
-      font-size: 10.5px;
-      padding: 1px 6px;
-      border-radius: 4px;
-      background: var(--accent-cyan-dim);
-      color: var(--accent-cyan);
-    }
-
-    .hud-mode-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-
-    .hud-mode-static {
-      background: var(--accent-indigo-dim);
-      color: var(--accent-indigo);
-      border: 1px solid rgba(129, 140, 248, 0.35);
-    }
-
-    .hud-mode-contextual {
-      background: var(--accent-emerald-dim);
-      color: var(--accent-emerald);
-      border: 1px solid rgba(52, 211, 153, 0.35);
-    }
-
-    .hud-coords {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 9px;
-    }
-
-    .coord-box {
-      background: rgba(10, 14, 24, 0.85);
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 5px 6px;
-      text-align: center;
-      font-family: var(--font-mono);
-    }
-
-    .coord-axis {
-      font-size: 9.5px;
+      font-size: 11px;
       color: var(--text-muted);
-      display: block;
+      font-family: var(--font-mono);
     }
 
-    .coord-val {
-      font-size: 11.5px;
-      font-weight: 600;
+    .hud-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+
+    .hud-close-btn:hover {
       color: var(--text-primary);
     }
 
-    .hud-neighbors-title {
+    /* Plain-English Meaning Cluster Badge */
+    .hud-cluster-badge {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+    }
+
+    .hud-mode-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .hud-mode-badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+    }
+
+    .hud-mode-badge.hud-mode-contextual {
+      color: var(--accent-emerald);
+      background: var(--accent-emerald-subtle);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .hud-mode-badge.hud-mode-static {
+      color: var(--accent-indigo);
+      background: rgba(129, 140, 248, 0.1);
+      border: 1px solid rgba(129, 140, 248, 0.25);
+    }
+
+    /* 3D Coordinates */
+    .hud-coords {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 5px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .coord-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .coord-axis {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .coord-val {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
+
+    /* Nearest Neighbors */
+    .hud-neighbors-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hud-neighbors-title {
+      font-size: 9.5px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-secondary);
-      margin-bottom: 5px;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
     }
 
     .neighbor-list {
@@ -1077,372 +1221,483 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-size: 11.5px;
       font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 4px 7px;
-      border-radius: 5px;
-      background: rgba(10, 14, 24, 0.7);
-      border: 1px solid rgba(30, 41, 59, 0.7);
+      color: var(--text-secondary);
     }
 
     .neighbor-sim {
+      font-size: 10.5px;
       color: var(--accent-emerald);
-      font-weight: 600;
+      background: var(--accent-emerald-subtle);
+      padding: 0 5px;
+      border-radius: 3px;
     }
 
-    .empty-notice {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 14px 10px;
-      font-style: italic;
+    /* ==========================================================================
+       5. RESPONSIVENESS (DESKTOP, TABLET & MOBILE)
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .app-shell {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+      }
+
+      .app-header {
+        padding: 0 16px;
+      }
+
+      .app-subtitle {
+        display: none;
+      }
+
+      .workspace-grid {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+      }
+
+      .guided-workspace {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        padding: 24px 20px 32px 20px;
+        border-right: none;
+        order: 1;
+      }
+
+      .viewport-column {
+        height: 400px;
+        min-height: 380px;
+        border-top: 1px solid var(--border-subtle);
+        order: 2;
+      }
+
+      /* Make touch targets comfortable (min-height: 44px) */
+      .preset-pill, .btn-step-primary, .btn-step-secondary, .guided-input, .seg-choice {
+        min-height: 44px;
+      }
+
+      .inspector-hud {
+        bottom: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: 320px;
+        margin: 0 auto;
+      }
     }
+
+    @media (max-width: 640px) {
+      .guided-stepper .tab-name {
+        display: none;
+      }
+
+      .guided-stepper .stepper-tab {
+        padding: 6px 8px;
+      }
+
+      .canvas-legend {
+        display: none;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <!-- ========================================================================
-       TOP HEADER & 6-STAGE PIPELINE PROGRESS INDICATOR
-       ======================================================================== -->
-  <header class="studio-header">
-    <div class="header-inner">
-      <div class="brand">
-        <div class="brand-logo" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <div class="app-shell">
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
             <polyline points="2 17 12 22 22 17"></polyline>
             <polyline points="2 12 12 17 22 12"></polyline>
           </svg>
         </div>
-        <div>
-          <div class="brand-title">
-            LLM Pipeline Explorer
-            <span class="brand-badge">Vector Studio v2.4</span>
+        <div class="app-title-group">
+          <div class="app-title">
+            <span>LLM Pipeline Explorer</span>
+            <span class="version-tag">Interactive Guide</span>
           </div>
-          <div class="brand-subtitle">From Raw Corpus → Vocabulary &amp; Tokenization → Static vs. Contextual 3D Embeddings</div>
+          <span class="app-subtitle">Understand how an AI reads text, maps numbers, and creates 3D meaning</span>
         </div>
       </div>
 
-      <nav class="pipeline-stepper" aria-label="LLM Pipeline Stages">
-        <button class="step-pill completed active" data-target="stage-1">
-          <span class="step-num">1</span> Corpus
+      <!-- 5-STEP GUIDED PROGRESS BAR -->
+      <nav class="guided-stepper" aria-label="Walkthrough Stepper">
+        <button type="button" class="stepper-tab active" data-step="1">
+          <span class="tab-num">1</span>
+          <span class="tab-name">Training</span>
         </button>
-        <span class="step-connector"></span>
-        <button class="step-pill completed" data-target="stage-2">
-          <span class="step-num">2</span> Vocabulary
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="2">
+          <span class="tab-num">2</span>
+          <span class="tab-name">Dictionary</span>
         </button>
-        <span class="step-connector"></span>
-        <button class="step-pill completed" data-target="stage-3">
-          <span class="step-num">3</span> Tokenizer
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="3">
+          <span class="tab-num">3</span>
+          <span class="tab-name">Tokens</span>
         </button>
-        <span class="step-connector"></span>
-        <button class="step-pill completed" data-target="stage-4">
-          <span class="step-num">4</span> 2nd Sentence
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="4">
+          <span class="tab-num">4</span>
+          <span class="tab-name">Test Sentence</span>
         </button>
-        <span class="step-connector"></span>
-        <button class="step-pill completed" data-target="stage-5">
-          <span class="step-num">5</span> Embedding Mode
-        </button>
-        <span class="step-connector"></span>
-        <button class="step-pill completed" data-target="stage-6">
-          <span class="step-num">6</span> 3D Vector Space
+        <span class="tab-divider"></span>
+        <button type="button" class="stepper-tab" data-step="5">
+          <span class="tab-num">5</span>
+          <span class="tab-name">3D Meaning</span>
         </button>
       </nav>
-    </div>
-  </header>
+    </header>
 
-  <!-- ========================================================================
-       MAIN 2-COLUMN DASHBOARD WORKSPACE
-       ======================================================================== -->
-  <main class="workspace-grid">
-    <!-- LEFT COLUMN: STAGES 1 TO 5 -->
-    <section class="pipeline-column" aria-label="Pipeline Configuration Stages">
-      
-      <!-- STAGE 1: INPUT SENTENCES (TRAINING CORPUS) -->
-      <article class="stage-card" id="stage-1">
-        <div class="stage-header">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-cyan">STAGE 01</span>
-            <div>
-              <h2 class="stage-title">Input Sentences (Training Corpus)</h2>
-              <p class="stage-desc">Provide corpus sentences to learn token IDs &amp; semantic co-occurrence clusters.</p>
+    <!-- 2-COLUMN WORKSPACE -->
+    <main class="workspace-grid">
+      <!-- LEFT GUIDED WALKTHROUGH PANEL -->
+      <section class="guided-workspace" id="guidedWorkspace" aria-label="5-Step Guided Walkthrough">
+        
+        <!-- ==================================================================
+             STEP 1: TRAINING SENTENCES
+             ================================================================== -->
+        <article class="step-view active" id="stepView-1">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 1 of 5 · Training</span>
+              <span class="step-meta-badge" id="corpusLineCount">4 Sentences</span>
             </div>
+            <h1 class="step-title">Training Sentences</h1>
+            <p class="step-desc">An AI learns what words mean by reading examples.</p>
           </div>
-          <span class="stage-meta" id="corpusLineCount">4 Sentences</span>
-        </div>
 
-        <div class="preset-row" role="group" aria-label="Corpus Presets">
-          <button type="button" class="btn-chip active" data-preset="bank">Polysemy: River vs Finance Bank</button>
-          <button type="button" class="btn-chip" data-preset="apple">Apple: Fruit vs Tech</button>
-          <button type="button" class="btn-chip" data-preset="empty">Custom Empty</button>
-        </div>
+          <div class="guided-card">
+            <div class="preset-group">
+              <span class="preset-label">Choose a beginner example topic:</span>
+              <div class="preset-pills" role="group" aria-label="Example Topics">
+                <button type="button" class="preset-pill active" data-preset="bank">Bank: River vs. Money</button>
+                <button type="button" class="preset-pill" data-preset="apple">Apple: Fruit vs. Tech</button>
+                <button type="button" class="preset-pill" data-preset="empty">Custom Empty</button>
+              </div>
+            </div>
 
-        <textarea
-          id="corpusInput"
-          class="studio-textarea"
-          rows="4"
-          spellcheck="false"
-          aria-label="Training Corpus Sentences"
-        >The river bank overflowed after heavy rain.
+            <textarea
+              id="corpusInput"
+              class="guided-textarea"
+              rows="4"
+              spellcheck="false"
+              aria-label="Training corpus sentences"
+            >The river bank overflowed after heavy rain.
 I deposited money in the bank yesterday.
 Clear water flows down the river.
 She checked her account balance and money.</textarea>
 
-        <button type="button" id="buildPipelineBtn" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-          1. Build Vocabulary &amp; Tokenize
-        </button>
-      </article>
-
-      <!-- STAGE 2: VOCABULARY BUILDER -->
-      <article class="stage-card" id="stage-2">
-        <div class="stage-header">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-indigo">STAGE 02</span>
-            <div>
-              <h2 class="stage-title">Vocabulary Builder</h2>
-              <p class="stage-desc">Special tokens [0–3] + deterministic sorted unique corpus tokens.</p>
+            <div class="step-actions">
+              <button type="button" id="buildPipelineBtn" class="btn-step-primary">
+                <span>Learn Words &amp; Continue →</span>
+              </button>
             </div>
           </div>
-          <span class="stage-meta" id="vocabSizeBadge">0 Tokens</span>
-        </div>
+        </article>
 
-        <div class="vocab-toolbar">
-          <input
-            type="text"
-            id="vocabSearchInput"
-            class="vocab-search"
-            placeholder="Filter vocabulary by token or #ID..."
-            aria-label="Search vocabulary"
-          />
-        </div>
+        <!-- ==================================================================
+             STEP 2: WORD DICTIONARY (VOCABULARY)
+             ================================================================== -->
+        <article class="step-view" id="stepView-2">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 2 of 5 · Vocabulary</span>
+              <span class="step-meta-badge" id="vocabSizeBadge">26 Unique Words</span>
+            </div>
+            <h1 class="step-title">Word Dictionary</h1>
+            <p class="step-desc">Every unique word gets its own ID number.</p>
+          </div>
 
-        <div class="vocab-table-wrap">
-          <table class="vocab-table">
-            <thead>
-              <tr>
-                <th style="width: 68px;">ID</th>
-                <th>Token</th>
-                <th style="width: 120px;">Corpus Freq</th>
-              </tr>
-            </thead>
-            <tbody id="vocabTableBody">
+          <div class="guided-card">
+            <div class="vocab-toolbar">
+              <div class="vocab-search-wrap">
+                <svg class="vocab-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  id="vocabSearchInput"
+                  class="vocab-search-input"
+                  placeholder="Filter dictionary words or #ID..."
+                  aria-label="Filter dictionary"
+                />
+              </div>
+
+              <div class="vocab-toggle-row">
+                <label class="special-toggle-label" title="Show [PAD], [UNK], [CLS], and [SEP] tokens">
+                  <input type="checkbox" id="showSpecialTokensToggle" />
+                  <span>Show Special Tokens ([PAD], [UNK], [CLS], [SEP])</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="vocabTableBody" class="guided-vocab-cloud">
               <!-- Populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </article>
+            </div>
 
-      <!-- STAGE 3: CORPUS TOKENIZER -->
-      <article class="stage-card" id="stage-3">
-        <div class="stage-header">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-cyan">STAGE 03</span>
-            <div>
-              <h2 class="stage-title">Corpus Tokenizer</h2>
-              <p class="stage-desc">Maps each word in Stage 1 sentences to its deterministic Vocabulary ID.</p>
+            <div class="step-actions">
+              <button type="button" id="prevBtn2" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn2" class="btn-step-primary">
+                <span>See Tokenized Sentences →</span>
+              </button>
             </div>
           </div>
-          <span class="stage-meta" id="totalCorpusTokensBadge">0 Tokens</span>
-        </div>
+        </article>
 
-        <div id="corpusTokensContainer" class="sentence-token-list">
-          <!-- Populated dynamically -->
-        </div>
-      </article>
+        <!-- ==================================================================
+             STEP 3: SENTENCE TOKENIZER
+             ================================================================== -->
+        <article class="step-view" id="stepView-3">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 3 of 5 · Tokenization</span>
+              <span class="step-meta-badge" id="totalCorpusTokensBadge">27 Tokens</span>
+            </div>
+            <h1 class="step-title">Sentence Tokenizer</h1>
+            <p class="step-desc">Computers read numbers, not words. Here is how the AI converts your text into ID numbers.</p>
+          </div>
 
-      <!-- STAGE 4: 2ND SENTENCE INPUT (QUERY / CONTEXT SENTENCE) -->
-      <article class="stage-card" id="stage-4">
-        <div class="stage-header">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-amber">STAGE 04</span>
-            <div>
-              <h2 class="stage-title">2nd Sentence Input (Context Query)</h2>
-              <p class="stage-desc">Test how context disambiguates words or handles unseen [UNK] tokens.</p>
+          <div class="guided-card">
+            <div id="corpusTokensContainer" class="guided-sentences-list">
+              <!-- Populated dynamically -->
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn3" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn3" class="btn-step-primary">
+                <span>Test Your Own Sentence →</span>
+              </button>
             </div>
           </div>
-          <span class="stage-meta" id="queryTokenCountBadge">0 Tokens</span>
-        </div>
+        </article>
 
-        <div class="preset-row" id="contextPresetRow" role="group" aria-label="2nd Sentence Context Presets">
-          <button type="button" class="btn-chip active" id="ctxBtnA" data-ctx="A">Context A: River Bank</button>
-          <button type="button" class="btn-chip" id="ctxBtnB" data-ctx="B">Context B: Finance Bank</button>
-        </div>
-
-        <input
-          type="text"
-          id="querySentenceInput"
-          class="studio-input"
-          value="He sat by the river bank watching the water."
-          placeholder="Type a 2nd sentence to tokenize & project into 3D..."
-          spellcheck="false"
-          aria-label="2nd Sentence Context Query"
-        />
-
-        <div class="query-tokens-box">
-          <div class="query-tokens-header">
-            <span>Real-Time Query Token Stream (click a token to inspect attention)</span>
-            <span id="unkCounterLabel" style="font-family: var(--font-mono); color: var(--accent-amber);"></span>
+        <!-- ==================================================================
+             STEP 4: TEST YOUR OWN SENTENCE
+             ================================================================== -->
+        <article class="step-view" id="stepView-4">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 4 of 5 · Real-Time Query</span>
+              <span class="step-meta-badge" id="queryTokenCountBadge">9 Tokens</span>
+            </div>
+            <h1 class="step-title">Test Your Own Sentence</h1>
+            <p class="step-desc">Type any sentence to see how the model tokenizes it live and projects it into 3D space.</p>
           </div>
-          <div id="queryTokensContainer" class="token-chips-wrap">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-      </article>
 
-      <!-- STAGE 5: EMBEDDING MODE SELECTOR (STATIC VS. CONTEXTUAL) -->
-      <article class="stage-card" id="stage-5">
-        <div class="stage-header">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-emerald">STAGE 05</span>
-            <div>
-              <h2 class="stage-title">Embedding Mode Selector</h2>
-              <p class="stage-desc">Compare fixed lookup vectors vs. Transformer Self-Attention shifts.</p>
+          <div class="guided-card">
+            <div class="preset-group">
+              <span class="preset-label">Quick meaning context:</span>
+              <div class="preset-pills" role="group" aria-label="Context Presets">
+                <button type="button" class="preset-pill active" id="ctxBtnA" data-ctx="A">Context A: River Bank</button>
+                <button type="button" class="preset-pill" id="ctxBtnB" data-ctx="B">Context B: Finance Bank</button>
+              </div>
+            </div>
+
+            <input
+              type="text"
+              id="querySentenceInput"
+              class="guided-input"
+              value="He sat by the river bank watching the water."
+              placeholder="Type any sentence to test..."
+              spellcheck="false"
+              aria-label="Test sentence input"
+            />
+
+            <div class="query-stream-card">
+              <div class="query-stream-header">
+                <span>Live Token Stream</span>
+                <span id="unkCounterLabel" style="color: var(--accent-amber); font-family: var(--font-mono); font-weight: 500;"></span>
+              </div>
+              <div id="queryTokensContainer" class="guided-query-chips">
+                <!-- Populated dynamically -->
+              </div>
+              <p class="query-hint">💡 Tip: Click any token chip to inspect its self-attention breakdown and 3D coordinates.</p>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn4" class="btn-step-secondary">
+                <span>← Back</span>
+              </button>
+              <button type="button" id="nextBtn4" class="btn-step-primary">
+                <span>See 3D Meaning Shift →</span>
+              </button>
             </div>
           </div>
-          <span class="stage-meta" id="embeddingModeBadge">Contextual</span>
-        </div>
+        </article>
 
-        <div class="mode-toggle-grid" role="group" aria-label="Embedding Mode">
-          <button type="button" id="btnStaticMode" class="mode-btn">
-            <span class="mode-btn-title">
-              <span style="color: var(--accent-indigo);">●</span> Static Embeddings
-            </span>
-            <span class="mode-btn-sub">Word2Vec / GloVe Lookup</span>
-          </button>
-
-          <button type="button" id="btnContextualMode" class="mode-btn active-contextual">
-            <span class="mode-btn-title">
-              <span style="color: var(--accent-emerald);">●</span> Contextual Embeddings
-            </span>
-            <span class="mode-btn-sub">Transformer Self-Attention</span>
-          </button>
-        </div>
-
-        <div class="attention-panel">
-          <div class="attention-panel-header">
-            <span style="color: var(--text-secondary); font-weight: 600;">Self-Attention Influence Breakdown</span>
-            <span class="attention-target-badge" id="attnSelectedTokenBadge">Target: "bank"</span>
+        <!-- ==================================================================
+             STEP 5: STATIC VS. CONTEXTUAL IN 3D
+             ================================================================== -->
+        <article class="step-view" id="stepView-5">
+          <div class="step-header">
+            <div class="step-tag-wrap">
+              <span class="step-tag">Step 5 of 5 · 3D Vector Space</span>
+              <span class="step-meta-badge badge-contextual" id="embeddingModeBadge">Contextual (Context-Aware)</span>
+            </div>
+            <h1 class="step-title">Static vs. Contextual</h1>
+            <p class="step-desc">See how context changes a word's meaning in 3D space.</p>
           </div>
-          <div id="attentionBarsContainer" class="attention-bars">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-      </article>
-    </section>
 
-    <!-- RIGHT COLUMN: STAGE 6 — INTERACTIVE 3D VECTOR SPACE GRAPH -->
-    <section class="viewport-column" id="stage-6" aria-label="Interactive 3D Vector Space Graph">
-      <div class="viewport-card">
-        <div class="viewport-topbar">
-          <div class="stage-title-group">
-            <span class="stage-badge badge-emerald">STAGE 06</span>
-            <div>
-              <h2 class="stage-title">Interactive 3D Vector Space Graph</h2>
-              <p class="stage-desc">Semantic X · Semantic Y · Contextual Z (Pure HTML5 Canvas 3D Engine)</p>
+          <div class="guided-card">
+            <!-- Large Tactile Segmented Switch -->
+            <div class="guided-segmented-switch" role="group" aria-label="Embedding Mode Switch">
+              <button type="button" id="btnStaticMode" class="seg-choice">
+                <span class="seg-choice-title">
+                  <span>📦</span> Static Meaning
+                </span>
+                <span class="seg-choice-sub">Word2Vec (Frozen Lookup)</span>
+              </button>
+
+              <button type="button" id="btnContextualMode" class="seg-choice active active-contextual">
+                <span class="seg-choice-title">
+                  <span>✨</span> Context-Aware
+                </span>
+                <span class="seg-choice-sub">Transformer (Self-Attention)</span>
+              </button>
+            </div>
+
+            <!-- Plain-English 1-Sentence Explanation Banner -->
+            <div id="modeExplanationBanner" class="guided-explanation-banner contextual-mode">
+              <div class="explanation-icon">✨</div>
+              <div class="explanation-text">
+                <strong>Context-Aware (Self-Attention):</strong> The AI reads surrounding words (like <em>"river"</em> and <em>"water"</em>) and physically shifts <strong>"bank"</strong> into the Nature/Water cluster in 3D space!
+              </div>
+            </div>
+
+            <!-- Self-Attention Influence Breakdown -->
+            <div class="guided-attention-panel" id="attentionPanel">
+              <div class="attn-header">
+                <span>Self-Attention Influence Breakdown</span>
+                <span class="attn-target-badge" id="attnSelectedTokenBadge">Target: "bank" (#8)</span>
+              </div>
+              <div id="attentionBarsContainer" class="guided-attention-bars">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" id="prevBtn5" class="btn-step-secondary">
+                <span>← Back to Test Sentence</span>
+              </button>
+              <button type="button" id="restartWalkthroughBtn" class="btn-step-primary">
+                <span>Restart Walkthrough ↺</span>
+              </button>
             </div>
           </div>
+        </article>
+      </section>
 
-          <div class="viewport-controls">
-            <button type="button" id="btnResetCamera" class="ctrl-btn" title="Reset 3D Orbit Camera">
-              Reset Camera
-            </button>
-            <button type="button" id="btnAutoRotate" class="ctrl-btn active" title="Toggle Auto-Orbit Rotation">
-              Auto-Rotate: ON
-            </button>
-            <label class="ctrl-checkbox" title="Display dashed displacement vectors from Static to Contextual coordinates">
-              <input type="checkbox" id="chkShowShiftVectors" checked />
-              Show Shift Vectors
-            </label>
-          </div>
-        </div>
-
+      <!-- RIGHT COLUMN: 3D VECTOR SPACE CANVAS -->
+      <section class="viewport-column" id="stage-6" aria-label="Interactive 3D Vector Space">
         <div class="canvas-stage" id="canvasContainer">
           <canvas id="vectorCanvas"></canvas>
 
-          <!-- Floating HUD Inspector Card -->
-          <aside class="inspector-hud" id="inspectorHud" aria-live="polite">
+          <!-- Top-Left Floating Controls Bar -->
+          <div class="hud-floating-bar hud-top-left" role="toolbar" aria-label="Canvas Controls">
+            <button type="button" id="btnResetCamera" class="hud-pill-btn" title="Reset View Orbit">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span>Reset View</span>
+            </button>
+            <div class="hud-bar-divider"></div>
+            <button type="button" id="btnAutoRotate" class="hud-pill-btn active" title="Toggle Auto-Orbit Rotation">
+              <span class="hud-status-dot on"></span>
+              <span>Auto-Rotate: ON</span>
+            </button>
+            <div class="hud-bar-divider"></div>
+            <label class="hud-pill-check" title="Toggle displaying all word labels vs. smart zero-overlap labels">
+              <input type="checkbox" id="chkShowAllLabels" />
+              <span>Show All Labels</span>
+            </label>
+            <div class="hud-bar-divider"></div>
+            <label class="hud-pill-check" title="Toggle displacement trajectory arrows">
+              <input type="checkbox" id="chkShowShiftVectors" checked />
+              <span>Shift Vectors</span>
+            </label>
+          </div>
+
+          <!-- Bottom-Left Minimal 2-Color Legend -->
+          <div class="canvas-legend">
+            <div class="legend-item">
+              <span class="legend-dot dot-query"></span>
+              <span>Your Sentence</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot dot-vocab"></span>
+              <span>Vocabulary Word</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-line"></span>
+              <span>Attention Shift</span>
+            </div>
+          </div>
+
+          <!-- Bottom-Right Floating Inspector Card (ONLY visible when a node is clicked!) -->
+          <aside class="inspector-hud hidden" id="inspectorHud" aria-live="polite">
             <div class="hud-header">
               <div class="hud-token-title">
                 <span id="hudTokenName">"bank"</span>
-                <span class="hud-id-pill" id="hudTokenId">#5</span>
+                <span class="hud-id-pill" id="hudTokenId">#8</span>
               </div>
+              <button type="button" class="hud-close-btn" id="hudCloseBtn" title="Close inspector">✕</button>
+            </div>
+
+            <!-- Plain-English Meaning Cluster -->
+            <div class="hud-cluster-badge" id="hudClusterBadge">
+              🌿 Nature &amp; River (Water Flow) Cluster
+            </div>
+
+            <div class="hud-mode-row">
+              <span>Embedding Space:</span>
               <span class="hud-mode-badge hud-mode-contextual" id="hudModeBadge">Contextual</span>
             </div>
 
+            <!-- 3D Coordinates -->
             <div class="hud-coords">
               <div class="coord-box">
-                <span class="coord-axis">DIM 1 (X)</span>
+                <span class="coord-axis">X</span>
                 <span class="coord-val" id="hudCoordX">0.000</span>
               </div>
               <div class="coord-box">
-                <span class="coord-axis">DIM 2 (Y)</span>
+                <span class="coord-axis">Y</span>
                 <span class="coord-val" id="hudCoordY">0.000</span>
               </div>
               <div class="coord-box">
-                <span class="coord-axis">DIM 3 (Z)</span>
+                <span class="coord-axis">Z</span>
                 <span class="coord-val" id="hudCoordZ">0.000</span>
               </div>
             </div>
 
-            <div class="hud-neighbors-title">Top 3 Nearest Neighbors (Cosine Sim)</div>
-            <div class="neighbor-list" id="hudNeighborList">
-              <!-- Populated dynamically -->
+            <!-- Nearest Neighbors -->
+            <div class="hud-neighbors-section">
+              <div class="hud-neighbors-title">Top 3 Closest Words</div>
+              <div class="neighbor-list" id="hudNeighborList">
+                <!-- Populated dynamically -->
+              </div>
             </div>
           </aside>
-
-          <!-- Legend Overlay -->
-          <div class="canvas-legend">
-            <div class="legend-item">
-              <span class="legend-dot" style="background: #34d399; box-shadow: 0 0 8px #34d399;"></span>
-              <span>2nd Sentence Tokens (Active Vector)</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background: #818cf8; opacity: 0.75;"></span>
-              <span>Vocabulary Reference Space</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-line"></span>
-              <span>Self-Attention Shift (Static → Contextual)</span>
-            </div>
-          </div>
-
-          <div class="camera-hint">Drag to Orbit · Scroll to Zoom · Click Node to Inspect</div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
+  </div>
 
   <script>
-    /**
-     * ============================================================================
-     * LLM PIPELINE EXPLORER — COMPLETE VANILLA JAVASCRIPT ENGINE
-     * ============================================================================
-     * Architecture:
-     * 1. PRESETS: Curated corpora & dual-context query pairs demonstrating polysemy.
-     * 2. TokenizerEngine: Deterministic normalization, special tokens [0..3],
-     *    vocabulary frequency table, and real-time OOV ([UNK]) handling.
-     * 3. EmbeddingEngine:
-     *    - Static Embeddings: Co-occurrence affinity + spectral Laplacian power
-     *      iteration + semantic feature projection so related clusters separate
-     *      naturally and polysemous bridge words sit between clusters.
-     *    - Contextual Embeddings: Sinusoidal positional encoding + scaled dot-product
-     *      self-attention weights that pull polysemous words toward active context.
-     *    - Cosine Similarity: Exact 3D vector similarity ranking.
-     * 4. VectorSpace3D: Pure HTML5 Canvas 3D perspective engine with smooth
-     *    spring-interpolated transitions, orbit camera, zoom, shift arrows, and
-     *    interactive ray/point picking.
-     * 5. PipelineApp: Reactive state coordinator across Stages 1–6.
-     */
-
     (function () {
       'use strict';
 
-      /* --------------------------------------------------------------------------
-       * 1. DATASETS & PRESETS
-       * -------------------------------------------------------------------------- */
-      const PRESETS = {
+const PRESETS = {
         bank: {
           corpus: [
             'The river bank overflowed after heavy rain.',
@@ -1942,6 +2197,15 @@ She checked her account balance and money.</textarea>
       /* --------------------------------------------------------------------------
        * 5. PURE HTML5 CANVAS 3D VECTOR SPACE ENGINE (STAGE 6)
        * -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+       * 4. 3D VECTOR SPACE CANVAS ENGINE (PURE HTML5 CANVAS)
+       * -------------------------------------------------------------------------- */
+      const KEY_ANCHOR_WORDS = new Set([
+        'river', 'water', 'rain', 'money', 'account', 'balance',
+        'fruit', 'sweet', 'orchard', 'laptop', 'chip', 'code', 'bank', 'apple'
+      ]);
+
       class VectorSpace3D {
         constructor(canvas, onNodeSelect) {
           this.canvas = canvas;
@@ -1959,12 +2223,13 @@ She checked her account balance and money.</textarea>
 
           this.autoRotate = true;
           this.showShiftVectors = true;
+          this.showAllLabels = false; // Zero text overlap by default!
           this.mode = 'contextual'; // 'static' | 'contextual'
 
           // Scene data
           this.vocabNodes = []; // { id, token, pos: [x,y,z], freq }
           this.queryNodes = []; // { position, surface, norm, id, isUnk, staticVec, contextualVec, currentVec, targetVec }
-          this.selectedNodeKey = null; // e.g. 'query:3' or 'vocab:5'
+          this.selectedNodeKey = null;
           this.hoveredNodeKey = null;
 
           // Projected 2D hit targets for hover/click picking
@@ -2046,30 +2311,24 @@ She checked her account balance and money.</textarea>
           });
         }
 
-        /**
-         * 3D to 2D Perspective Projection
-         */
         project(x, y, z) {
-          // Rotate around Y axis (yaw)
           const cosY = Math.cos(this.yaw);
           const sinY = Math.sin(this.yaw);
           const x1 = x * cosY - z * sinY;
           const z1 = x * sinY + z * cosY;
 
-          // Rotate around X axis (pitch)
           const cosX = Math.cos(this.pitch);
           const sinX = Math.sin(this.pitch);
           const y2 = y * cosX - z1 * sinX;
           const z2 = y * sinX + z1 * cosX;
 
-          // Perspective camera distance
           const fov = 3.4;
           const zCam = fov + z2;
           const safeZ = Math.max(0.4, zCam);
-          const baseScale = Math.min(this.width, this.height) * 0.34 * this.zoom;
+          const baseScale = Math.min(this.width, this.height) * 0.35 * this.zoom;
           const scale = (fov / safeZ) * baseScale;
 
-          const sx = this.width * 0.47 + x1 * scale;
+          const sx = this.width * 0.5 + x1 * scale;
           const sy = this.height * 0.52 - y2 * scale;
 
           return { sx, sy, zDepth: z2, scale };
@@ -2078,7 +2337,11 @@ She checked her account balance and money.</textarea>
         _bindEvents() {
           window.addEventListener('resize', () => this.resize());
 
-          // Mouse Orbit & Hover
+          if (window.ResizeObserver && this.canvas.parentElement) {
+            new ResizeObserver(() => this.resize()).observe(this.canvas.parentElement);
+          }
+
+          // Mouse Orbit & Hover Picking
           this.canvas.addEventListener('mousedown', (e) => {
             this.isDragging = true;
             this.dragMoved = false;
@@ -2127,13 +2390,23 @@ She checked her account balance and money.</textarea>
             this.targetZoom = clamp(this.targetZoom * factor, 0.55, 2.35);
           }, { passive: false });
 
-          // Touch Orbit & Tap
+          // Touch Orbit & 2-Finger Pinch Zoom
+          let touchStartDist = 0;
+          let touchStartZoom = 1;
+
           this.canvas.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
               this.isDragging = true;
               this.dragMoved = false;
               this.lastPointerX = e.touches[0].clientX;
               this.lastPointerY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+              this.isDragging = false;
+              touchStartDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+              );
+              touchStartZoom = this.targetZoom;
             }
           }, { passive: true });
 
@@ -2146,6 +2419,13 @@ She checked her account balance and money.</textarea>
               this.targetPitch = clamp(this.targetPitch + dy * 0.009, -1.35, 1.35);
               this.lastPointerX = e.touches[0].clientX;
               this.lastPointerY = e.touches[0].clientY;
+            } else if (e.touches.length === 2 && touchStartDist > 0) {
+              const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+              );
+              const factor = currentDist / touchStartDist;
+              this.targetZoom = clamp(touchStartZoom * factor, 0.55, 2.35);
             }
           }, { passive: true });
 
@@ -2160,35 +2440,32 @@ She checked her account balance and money.</textarea>
                 this.onNodeSelect(hit);
               }
             }
+            if (e.touches.length < 2) {
+              touchStartDist = 0;
+            }
             this.isDragging = false;
           });
         }
 
         _findHitTarget(mx, my) {
-          // Search front-to-back (highest screen priority first)
           for (let i = this.hitTargets.length - 1; i >= 0; i--) {
             const t = this.hitTargets[i];
             const dist = Math.hypot(mx - t.sx, my - t.sy);
-            if (dist <= t.radius + 7) {
+            if (dist <= t.radius + 8) {
               return t;
             }
           }
           return null;
         }
 
-        /**
-         * Advances physics/camera interpolation and draws one complete 3D frame.
-         */
         renderFrame() {
-          // Smooth camera damping
           if (this.autoRotate && !this.isDragging) {
-            this.targetYaw += 0.0024;
+            this.targetYaw += 0.0022;
           }
           this.yaw += (this.targetYaw - this.yaw) * 0.12;
           this.pitch += (this.targetPitch - this.pitch) * 0.12;
           this.zoom += (this.targetZoom - this.zoom) * 0.12;
 
-          // Smoothly interpolate 2nd-sentence vectors between Static and Contextual
           for (const qn of this.queryNodes) {
             qn.currentVec[0] += (qn.targetVec[0] - qn.currentVec[0]) * 0.11;
             qn.currentVec[1] += (qn.targetVec[1] - qn.currentVec[1]) * 0.11;
@@ -2206,12 +2483,12 @@ She checked her account balance and money.</textarea>
           const extent = 1.05;
           const steps = 4;
 
-          // Subtle XZ floor grid at y = -0.95
+          // Subtle XZ floor grid
           ctx.lineWidth = 1;
           for (let i = -steps; i <= steps; i++) {
             const t = (i / steps) * extent;
-            const alpha = i === 0 ? 0.22 : 0.08;
-            ctx.strokeStyle = `rgba(148, 163, 184, ${alpha})`;
+            const alpha = i === 0 ? 0.16 : 0.05;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
 
             const p1 = this.project(t, -0.95, -extent);
             const p2 = this.project(t, -0.95, extent);
@@ -2228,65 +2505,47 @@ She checked her account balance and money.</textarea>
             ctx.stroke();
           }
 
-          // Primary 3D Coordinate Axes through origin (0,0,0)
+          // Primary 3D Coordinate Axes
           const axes = [
-            {
-              from: [-extent, 0, 0],
-              to: [extent, 0, 0],
-              color: 'rgba(56, 189, 248, 0.45)',
-              label: 'Dim 1: Semantic X'
-            },
-            {
-              from: [0, -extent, 0],
-              to: [0, extent, 0],
-              color: 'rgba(129, 140, 248, 0.45)',
-              label: 'Dim 2: Semantic Y'
-            },
-            {
-              from: [0, 0, -extent],
-              to: [0, 0, extent],
-              color: 'rgba(52, 211, 153, 0.45)',
-              label: 'Dim 3: Contextual Z'
-            }
+            { from: [-extent, 0, 0], to: [extent, 0, 0], color: 'rgba(99, 102, 241, 0.45)', label: 'Dim 1: Semantic X' },
+            { from: [0, -extent, 0], to: [0, extent, 0], color: 'rgba(168, 85, 247, 0.45)', label: 'Dim 2: Semantic Y' },
+            { from: [0, 0, -extent], to: [0, 0, extent], color: 'rgba(16, 185, 129, 0.45)', label: 'Dim 3: Contextual Z' }
           ];
 
-          ctx.font = '600 10.5px "JetBrains Mono", monospace';
+          ctx.font = '600 10px "JetBrains Mono", monospace';
           for (const ax of axes) {
             const a = this.project(...ax.from);
             const b = this.project(...ax.to);
 
             ctx.strokeStyle = ax.color;
-            ctx.lineWidth = 1.35;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(a.sx, a.sy);
             ctx.lineTo(b.sx, b.sy);
             ctx.stroke();
 
-            // Axis end cap dot
             ctx.fillStyle = ax.color;
             ctx.beginPath();
             ctx.arc(b.sx, b.sy, 2.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Label
-            ctx.fillStyle = 'rgba(203, 213, 225, 0.72)';
+            ctx.fillStyle = 'rgba(250, 250, 250, 0.65)';
             ctx.fillText(ax.label, b.sx + 6, b.sy + 3);
           }
 
-          // Subtle Semantic Cluster Region Watermarks
+          // Subtle Cluster Region Watermarks
           const clusterLeft = this.project(-0.78, 0.65, 0);
           const clusterRight = this.project(0.78, -0.62, 0);
-          ctx.font = '600 10px "Inter", sans-serif';
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.36)';
-          ctx.fillText('◀ Cluster A (Nature / Water / Fruit)', clusterLeft.sx - 75, clusterLeft.sy - 14);
-          ctx.fillStyle = 'rgba(251, 191, 36, 0.36)';
-          ctx.fillText('Cluster B (Finance / Tech) ▶', clusterRight.sx - 55, clusterRight.sy + 22);
+          ctx.font = '600 10.5px "Inter", sans-serif';
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+          ctx.fillText('◀ Nature / Water / Fruit Cluster', clusterLeft.sx - 80, clusterLeft.sy - 14);
+          ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+          ctx.fillText('Finance / Tech Cluster ▶', clusterRight.sx - 60, clusterRight.sy + 22);
         }
 
         _drawSceneNodes(ctx) {
           const renderables = [];
 
-          // 1. Add Vocabulary reference points
           for (const vn of this.vocabNodes) {
             const proj = this.project(...vn.pos);
             renderables.push({
@@ -2297,7 +2556,6 @@ She checked her account balance and money.</textarea>
             });
           }
 
-          // 2. Add 2nd Sentence query tokens
           for (const qn of this.queryNodes) {
             const proj = this.project(...qn.currentVec);
             const staticProj = this.project(...qn.staticVec);
@@ -2306,13 +2564,11 @@ She checked her account balance and money.</textarea>
               data: qn,
               proj,
               staticProj,
-              zDepth: proj.zDepth - 0.05 // slight front priority at equal depth
+              zDepth: proj.zDepth - 0.05
             });
           }
 
-          // Painter's algorithm: draw farthest nodes first, closest nodes last
           renderables.sort((a, b) => b.zDepth - a.zDepth);
-
           this.hitTargets = [];
           const queryNormSet = new Set(this.queryNodes.map(q => q.norm));
 
@@ -2329,32 +2585,35 @@ She checked her account balance and money.</textarea>
           const isSelected = this.selectedNodeKey === vn.key;
           const isHovered = this.hoveredNodeKey === vn.key;
           const alsoInQuery = queryNormSet.has(vn.token);
+          const isAnchor = KEY_ANCHOR_WORDS.has(vn.token);
+
+          // Zero Text Overlap:
+          // By default, only render text labels for key anchor words, selected word, hovered word, or if user enabled showAllLabels.
+          const shouldDrawLabel = this.showAllLabels || isSelected || isHovered || isAnchor;
 
           const depthFactor = clamp(proj.scale / 220, 0.65, 1.35);
-          const radius = (isSelected || isHovered ? 6.5 : 4.2) * depthFactor;
+          const radius = (isSelected || isHovered ? 6.5 : (isAnchor ? 4.5 : 3.2)) * depthFactor;
 
-          // Sphere fill
           ctx.beginPath();
           ctx.arc(proj.sx, proj.sy, radius, 0, Math.PI * 2);
           ctx.fillStyle = isSelected || isHovered
             ? '#38bdf8'
-            : (vn.token === '[UNK]' ? 'rgba(251, 191, 36, 0.65)' : 'rgba(129, 140, 248, 0.68)');
+            : (isAnchor ? 'rgba(148, 163, 184, 0.85)' : 'rgba(148, 163, 184, 0.42)');
           ctx.fill();
 
           if (isSelected || isHovered) {
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1.6;
             ctx.stroke();
           }
 
-          // Draw label if not occluded by an active query token with same name
-          if (!alsoInQuery || isSelected || isHovered) {
+          if (shouldDrawLabel && (!alsoInQuery || isSelected || isHovered)) {
             ctx.font = isSelected || isHovered
               ? '600 11.5px "JetBrains Mono", monospace'
               : '500 10.5px "JetBrains Mono", monospace';
             ctx.fillStyle = isSelected || isHovered
-              ? '#f8fafc'
-              : 'rgba(148, 163, 184, 0.78)';
+              ? '#fafafa'
+              : (isAnchor ? 'rgba(240, 240, 240, 0.85)' : 'rgba(161, 161, 170, 0.65)');
             ctx.fillText(vn.token, proj.sx + radius + 5, proj.sy + 3.5);
           }
 
@@ -2378,20 +2637,18 @@ She checked her account balance and money.</textarea>
           const depthFactor = clamp(proj.scale / 220, 0.75, 1.45);
           const radius = (isPolysemous ? 9.5 : 7.8) * depthFactor;
 
-          // 1. Draw Static -> Contextual dashed shift vector arrow when enabled
+          // 1. Static -> Contextual dashed shift vector arrow
           const shiftDistPx = Math.hypot(proj.sx - staticProj.sx, proj.sy - staticProj.sy);
           if (this.mode === 'contextual' && this.showShiftVectors && shiftDistPx > 6) {
-            // Static origin ghost ring
             ctx.beginPath();
             ctx.arc(staticProj.sx, staticProj.sy, 4.2, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.75)';
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.75)';
             ctx.lineWidth = 1.4;
             ctx.stroke();
 
-            // Dashed trajectory line
             ctx.save();
             ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = isPolysemous ? 'rgba(251, 191, 36, 0.92)' : 'rgba(56, 189, 248, 0.65)';
+            ctx.strokeStyle = isPolysemous ? 'rgba(245, 158, 11, 0.92)' : 'rgba(56, 189, 248, 0.65)';
             ctx.lineWidth = isPolysemous ? 2.0 : 1.4;
             ctx.beginPath();
             ctx.moveTo(staticProj.sx, staticProj.sy);
@@ -2399,13 +2656,12 @@ She checked her account balance and money.</textarea>
             ctx.stroke();
             ctx.restore();
 
-            // Arrowhead near destination sphere
             const angle = Math.atan2(proj.sy - staticProj.sy, proj.sx - staticProj.sx);
             const tipX = proj.sx - Math.cos(angle) * (radius + 3);
             const tipY = proj.sy - Math.sin(angle) * (radius + 3);
             const arrowLen = 7;
 
-            ctx.fillStyle = isPolysemous ? '#fbbf24' : '#38bdf8';
+            ctx.fillStyle = isPolysemous ? '#f59e0b' : '#38bdf8';
             ctx.beginPath();
             ctx.moveTo(tipX, tipY);
             ctx.lineTo(tipX - arrowLen * Math.cos(angle - 0.42), tipY - arrowLen * Math.sin(angle - 0.42));
@@ -2416,11 +2672,11 @@ She checked her account balance and money.</textarea>
 
           // 2. Outer Radial Glow Halo
           const coreColor = qn.isUnk
-            ? '#fbbf24'
-            : (isPolysemous ? '#34d399' : '#38bdf8');
+            ? '#f59e0b'
+            : (isPolysemous ? '#10b981' : '#38bdf8');
           const glowColor = qn.isUnk
-            ? 'rgba(251, 191, 36, 0.35)'
-            : (isPolysemous ? 'rgba(52, 211, 153, 0.42)' : 'rgba(56, 189, 248, 0.32)');
+            ? 'rgba(245, 158, 11, 0.35)'
+            : (isPolysemous ? 'rgba(16, 185, 129, 0.42)' : 'rgba(56, 189, 248, 0.32)');
 
           const grad = ctx.createRadialGradient(
             proj.sx, proj.sy, radius * 0.2,
@@ -2440,13 +2696,11 @@ She checked her account balance and money.</textarea>
           ctx.fillStyle = coreColor;
           ctx.fill();
 
-          // Specular highlight dot for 3D spherical depth
           ctx.beginPath();
           ctx.arc(proj.sx - radius * 0.3, proj.sy - radius * 0.3, radius * 0.28, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
           ctx.fill();
 
-          // Selection ring
           if (isSelected || isHovered) {
             ctx.beginPath();
             ctx.arc(proj.sx, proj.sy, radius + 4, 0, Math.PI * 2);
@@ -2455,7 +2709,7 @@ She checked her account balance and money.</textarea>
             ctx.stroke();
           }
 
-          // 4. Crisp Label Pill
+          // 4. Label Pill
           const labelText = `${qn.surface} #${qn.id}`;
           ctx.font = '700 11.5px "JetBrains Mono", monospace';
           const textMetrics = ctx.measureText(labelText);
@@ -2464,26 +2718,24 @@ She checked her account balance and money.</textarea>
           const pillX = proj.sx + radius + 7;
           const pillY = proj.sy - pillH / 2;
 
-          ctx.fillStyle = isSelected
-            ? 'rgba(15, 23, 42, 0.96)'
-            : 'rgba(11, 15, 25, 0.85)';
-          ctx.strokeStyle = isSelected ? '#34d399' : 'rgba(56, 189, 248, 0.45)';
-          ctx.lineWidth = isSelected ? 1.4 : 1;
+          ctx.fillStyle = isSelected ? 'rgba(18, 18, 22, 0.96)' : 'rgba(9, 9, 11, 0.88)';
+          ctx.strokeStyle = isSelected ? '#10b981' : 'rgba(255, 255, 255, 0.16)';
+          ctx.lineWidth = isSelected ? 1.5 : 1;
 
           this._roundRect(ctx, pillX, pillY, pillW, pillH, 5);
           ctx.fill();
           ctx.stroke();
 
-          ctx.fillStyle = '#f8fafc';
+          ctx.fillStyle = '#fafafa';
           ctx.fillText(labelText, pillX + 6, proj.sy + 4);
 
           this.hitTargets.push({
             key: qn.key,
             type: 'query',
             position: qn.position,
-            id: qn.id,
-            token: qn.surface,
+            surface: qn.surface,
             norm: qn.norm,
+            id: qn.id,
             isUnk: qn.isUnk,
             vec: qn.currentVec,
             sx: proj.sx,
@@ -2492,23 +2744,23 @@ She checked her account balance and money.</textarea>
           });
         }
 
-        _roundRect(ctx, x, y, w, h, r) {
+        _roundRect(ctx, x, y, width, height, radius) {
           ctx.beginPath();
-          ctx.moveTo(x + r, y);
-          ctx.lineTo(x + w - r, y);
-          ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-          ctx.lineTo(x + w, y + h - r);
-          ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-          ctx.lineTo(x + r, y + h);
-          ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-          ctx.lineTo(x, y + r);
-          ctx.quadraticCurveTo(x, y, x + r, y);
+          ctx.moveTo(x + radius, y);
+          ctx.lineTo(x + width - radius, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+          ctx.lineTo(x + width, y + height - radius);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+          ctx.lineTo(x + radius, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+          ctx.lineTo(x, y + radius);
+          ctx.quadraticCurveTo(x, y, x + radius, y);
           ctx.closePath();
         }
       }
 
-      /* --------------------------------------------------------------------------
-       * 6. MAIN APPLICATION CONTROLLER (COORDINATES STAGES 1–6)
+/* --------------------------------------------------------------------------
+       * 5. GUIDED PIPELINE APP CONTROLLER (5 STEPS + 3D VIEWPORT)
        * -------------------------------------------------------------------------- */
       class PipelineApp {
         constructor() {
@@ -2517,11 +2769,13 @@ She checked her account balance and money.</textarea>
           this.canvasEl = document.getElementById('vectorCanvas');
           this.scene3D = new VectorSpace3D(this.canvasEl, (hit) => this.handleNodeSelect(hit));
 
+          this.currentStep = 1;
           this.currentPreset = 'bank';
           this.embeddingMode = 'contextual'; // 'static' | 'contextual'
           this.contextualSequence = [];
           this.selectedQueryIndex = 0;
           this.inspectedNode = null;
+          this.showSpecialTokens = false;
 
           this._cacheDOM();
           this._bindUIEvents();
@@ -2530,17 +2784,28 @@ She checked her account balance and money.</textarea>
         }
 
         _cacheDOM() {
+          this.guidedWorkspace = document.getElementById('guidedWorkspace');
+
+          // Stepper tabs
+          this.stepperTabs = document.querySelectorAll('.stepper-tab');
+          this.stepViews = document.querySelectorAll('.step-view');
+
+          // Stage 1
           this.corpusInput = document.getElementById('corpusInput');
           this.corpusLineCount = document.getElementById('corpusLineCount');
           this.buildPipelineBtn = document.getElementById('buildPipelineBtn');
 
+          // Stage 2
           this.vocabSizeBadge = document.getElementById('vocabSizeBadge');
           this.vocabSearchInput = document.getElementById('vocabSearchInput');
           this.vocabTableBody = document.getElementById('vocabTableBody');
+          this.showSpecialTokensToggle = document.getElementById('showSpecialTokensToggle');
 
+          // Stage 3
           this.totalCorpusTokensBadge = document.getElementById('totalCorpusTokensBadge');
           this.corpusTokensContainer = document.getElementById('corpusTokensContainer');
 
+          // Stage 4
           this.ctxBtnA = document.getElementById('ctxBtnA');
           this.ctxBtnB = document.getElementById('ctxBtnB');
           this.querySentenceInput = document.getElementById('querySentenceInput');
@@ -2548,42 +2813,62 @@ She checked her account balance and money.</textarea>
           this.unkCounterLabel = document.getElementById('unkCounterLabel');
           this.queryTokensContainer = document.getElementById('queryTokensContainer');
 
+          // Stage 5
           this.embeddingModeBadge = document.getElementById('embeddingModeBadge');
           this.btnStaticMode = document.getElementById('btnStaticMode');
           this.btnContextualMode = document.getElementById('btnContextualMode');
+          this.modeExplanationBanner = document.getElementById('modeExplanationBanner');
           this.attnSelectedTokenBadge = document.getElementById('attnSelectedTokenBadge');
           this.attentionBarsContainer = document.getElementById('attentionBarsContainer');
 
+          // Step navigation buttons
+          this.prevBtn2 = document.getElementById('prevBtn2');
+          this.nextBtn2 = document.getElementById('nextBtn2');
+          this.prevBtn3 = document.getElementById('prevBtn3');
+          this.nextBtn3 = document.getElementById('nextBtn3');
+          this.prevBtn4 = document.getElementById('prevBtn4');
+          this.nextBtn4 = document.getElementById('nextBtn4');
+          this.prevBtn5 = document.getElementById('prevBtn5');
+          this.restartWalkthroughBtn = document.getElementById('restartWalkthroughBtn');
+
+          // 3D Canvas Controls & Floating HUD
           this.btnResetCamera = document.getElementById('btnResetCamera');
           this.btnAutoRotate = document.getElementById('btnAutoRotate');
           this.chkShowShiftVectors = document.getElementById('chkShowShiftVectors');
+          this.chkShowAllLabels = document.getElementById('chkShowAllLabels');
 
+          this.inspectorHud = document.getElementById('inspectorHud');
           this.hudTokenName = document.getElementById('hudTokenName');
           this.hudTokenId = document.getElementById('hudTokenId');
           this.hudModeBadge = document.getElementById('hudModeBadge');
+          this.hudClusterBadge = document.getElementById('hudClusterBadge');
           this.hudCoordX = document.getElementById('hudCoordX');
           this.hudCoordY = document.getElementById('hudCoordY');
           this.hudCoordZ = document.getElementById('hudCoordZ');
           this.hudNeighborList = document.getElementById('hudNeighborList');
+          this.hudCloseBtn = document.getElementById('hudCloseBtn');
         }
 
         _bindUIEvents() {
-          // Top Stepper Navigation
-          document.querySelectorAll('.step-pill').forEach(pill => {
-            pill.addEventListener('click', () => {
-              document.querySelectorAll('.step-pill').forEach(p => p.classList.remove('active'));
-              pill.classList.add('active');
-              const targetId = pill.getAttribute('data-target');
-              const targetEl = document.getElementById(targetId);
-              if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                targetEl.classList.add('highlight-pulse');
-                setTimeout(() => targetEl.classList.remove('highlight-pulse'), 900);
-              }
+          // Guided Stepper Tab Navigation
+          this.stepperTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              const step = Number(tab.getAttribute('data-step'));
+              this.goToStep(step);
             });
           });
 
-          // Stage 1 Preset Buttons
+          // Step Navigation Buttons
+          if (this.prevBtn2) this.prevBtn2.addEventListener('click', () => this.goToStep(1));
+          if (this.nextBtn2) this.nextBtn2.addEventListener('click', () => this.goToStep(3));
+          if (this.prevBtn3) this.prevBtn3.addEventListener('click', () => this.goToStep(2));
+          if (this.nextBtn3) this.nextBtn3.addEventListener('click', () => this.goToStep(4));
+          if (this.prevBtn4) this.prevBtn4.addEventListener('click', () => this.goToStep(3));
+          if (this.nextBtn4) this.nextBtn4.addEventListener('click', () => this.goToStep(5));
+          if (this.prevBtn5) this.prevBtn5.addEventListener('click', () => this.goToStep(4));
+          if (this.restartWalkthroughBtn) this.restartWalkthroughBtn.addEventListener('click', () => this.goToStep(1));
+
+          // Stage 1 Presets
           document.querySelectorAll('[data-preset]').forEach(btn => {
             btn.addEventListener('click', () => {
               document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
@@ -2609,17 +2894,23 @@ She checked her account balance and money.</textarea>
             });
           });
 
-          // Stage 1 Primary Build Button
+          // Stage 1 Primary Action: Build Dictionary & Advance to Step 2
           this.buildPipelineBtn.addEventListener('click', () => {
             this._runFullPipeline(true);
+            this.goToStep(2);
           });
 
-          // Stage 2 Vocabulary Search
+          // Stage 2 Search & Special Tokens Toggle
           this.vocabSearchInput.addEventListener('input', () => {
             this._renderVocabTable();
           });
 
-          // Stage 4 Context Quick-Switch Buttons
+          this.showSpecialTokensToggle.addEventListener('change', (e) => {
+            this.showSpecialTokens = e.target.checked;
+            this._renderVocabTable();
+          });
+
+          // Stage 4 Context Presets
           this.ctxBtnA.addEventListener('click', () => {
             const preset = PRESETS[this.currentPreset] || PRESETS.bank;
             this.querySentenceInput.value = preset.ctxA;
@@ -2643,7 +2934,7 @@ She checked her account balance and money.</textarea>
             this._updateQueryAndEmbeddings(false);
           });
 
-          // Stage 5 Static vs. Contextual Toggle
+          // Stage 5 Static vs Contextual Mode Toggle
           this.btnStaticMode.addEventListener('click', () => {
             this._setEmbeddingMode('static');
           });
@@ -2652,81 +2943,102 @@ She checked her account balance and money.</textarea>
             this._setEmbeddingMode('contextual');
           });
 
-          // Stage 6 3D Viewport Controls
+          // 3D Canvas Controls
           this.btnResetCamera.addEventListener('click', () => {
             this.scene3D.resetCamera();
           });
 
           this.btnAutoRotate.addEventListener('click', () => {
             this.scene3D.autoRotate = !this.scene3D.autoRotate;
-            this.btnAutoRotate.textContent = `Auto-Rotate: ${this.scene3D.autoRotate ? 'ON' : 'OFF'}`;
+            this.btnAutoRotate.innerHTML = `
+              <span class="hud-status-dot ${this.scene3D.autoRotate ? 'on' : ''}"></span>
+              <span>Auto-Rotate: ${this.scene3D.autoRotate ? 'ON' : 'OFF'}</span>
+            `;
             this.btnAutoRotate.classList.toggle('active', this.scene3D.autoRotate);
           });
 
           this.chkShowShiftVectors.addEventListener('change', (e) => {
             this.scene3D.showShiftVectors = e.target.checked;
           });
+
+          this.chkShowAllLabels.addEventListener('change', (e) => {
+            this.scene3D.showAllLabels = e.target.checked;
+          });
+
+          // Inspector HUD close button
+          this.hudCloseBtn.addEventListener('click', () => {
+            this.inspectedNode = null;
+            this.scene3D.selectedNodeKey = null;
+            this.inspectorHud.classList.add('hidden');
+          });
         }
 
-        /**
-         * Executes Stages 1 -> 2 -> 3 -> 4 -> 5 -> 6 end-to-end.
-         */
+        goToStep(stepNumber) {
+          this.currentStep = stepNumber;
+
+          // Switch views
+          this.stepViews.forEach((view, idx) => {
+            view.classList.toggle('active', idx + 1 === stepNumber);
+          });
+
+          // Update stepper tabs
+          this.stepperTabs.forEach((tab, idx) => {
+            const step = idx + 1;
+            tab.classList.toggle('active', step === stepNumber);
+            tab.classList.toggle('completed', step < stepNumber);
+          });
+
+          // Smooth scroll to top of workspace
+          if (this.guidedWorkspace) {
+            this.guidedWorkspace.scrollTop = 0;
+          }
+        }
+
         _runFullPipeline(autoFocusPolysemy = false) {
           const corpusText = this.corpusInput.value;
           const { vocabList, tokenizedCorpus } = this.tokenizer.buildFromCorpus(corpusText);
 
-          // Stage 1 meta
           const sCount = tokenizedCorpus.length;
-          this.corpusLineCount.textContent = `${sCount} ${sCount === 1 ? 'Sentence' : 'Sentences'}`;
+          this.corpusLineCount.textContent = `${sCount} Sentence${sCount === 1 ? '' : 's'}`;
 
-          // Stage 2 Vocabulary
-          this.vocabSizeBadge.textContent = `${vocabList.length} Tokens`;
-          this._renderVocabTable();
+          const staticVectors = this.embedder.computeStaticEmbeddings(vocabList, tokenizedCorpus);
 
-          // Stage 3 Corpus Tokenizer
+          const actualWordsCount = vocabList.filter(v => !v.isSpecial).length;
+          this.vocabSizeBadge.textContent = `${actualWordsCount} Unique Words`;
+
           const totalCorpusToks = tokenizedCorpus.reduce((acc, s) => acc + s.tokens.length, 0);
           this.totalCorpusTokensBadge.textContent = `${totalCorpusToks} Tokens`;
-          this._renderCorpusTokens(tokenizedCorpus);
 
-          // Compute Static 3D Embeddings for entire vocabulary
-          this.embedder.computeStaticEmbeddings(vocabList, tokenizedCorpus);
+          this._renderVocabTable();
+          this._renderCorpusTokens();
 
-          // Proceed to Stage 4, 5, 6
           this._updateQueryAndEmbeddings(autoFocusPolysemy);
         }
 
-        /**
-         * Updates Stage 4 query tokens, Stage 5 self-attention, and Stage 6 3D scene.
-         */
         _updateQueryAndEmbeddings(autoFocusPolysemy = false) {
           const queryText = this.querySentenceInput.value;
           const queryTokens = this.tokenizer.tokenizeQuery(queryText);
 
-          this.queryTokenCountBadge.textContent = `${queryTokens.length} Tokens`;
           const unkCount = queryTokens.filter(t => t.isUnk).length;
-          this.unkCounterLabel.textContent = unkCount > 0 ? `${unkCount} [UNK] OOV` : '0 [UNK]';
+          this.queryTokenCountBadge.textContent = `${queryTokens.length} Tokens`;
+          this.unkCounterLabel.textContent = unkCount > 0 ? `${unkCount} new word ([UNK])` : '';
 
-          // Compute Contextual Sequence & Attention Weights
           this.contextualSequence = this.embedder.computeContextualSequence(queryTokens);
 
-          // Auto-select polysemous target word ("bank" or "apple") if present
-          if (this.contextualSequence.length > 0) {
-            if (autoFocusPolysemy || this.selectedQueryIndex >= this.contextualSequence.length) {
-              const polyIdx = this.contextualSequence.findIndex(
-                t => t.norm === 'bank' || t.norm === 'apple'
-              );
-              if (polyIdx !== -1) {
-                this.selectedQueryIndex = polyIdx;
-              } else {
-                const contentIdx = this.contextualSequence.findIndex(t => !STOPWORDS.has(t.norm));
-                this.selectedQueryIndex = contentIdx !== -1 ? contentIdx : 0;
-              }
+          if (autoFocusPolysemy && this.contextualSequence.length > 0) {
+            const polyIdx = this.contextualSequence.findIndex(
+              t => t.norm === 'bank' || t.norm === 'apple'
+            );
+            if (polyIdx !== -1) {
+              this.selectedQueryIndex = polyIdx;
+            } else {
+              const contentIdx = this.contextualSequence.findIndex(t => !STOPWORDS.has(t.norm));
+              this.selectedQueryIndex = contentIdx !== -1 ? contentIdx : 0;
             }
-          } else {
-            this.selectedQueryIndex = 0;
+          } else if (this.selectedQueryIndex >= this.contextualSequence.length) {
+            this.selectedQueryIndex = Math.max(0, this.contextualSequence.length - 1);
           }
 
-          // Update 3D Scene Data
           this.scene3D.updateSceneData(
             this.tokenizer.vocabList,
             this.embedder.staticVectors,
@@ -2735,13 +3047,16 @@ She checked her account balance and money.</textarea>
 
           if (this.contextualSequence.length > 0) {
             this.scene3D.selectedNodeKey = `query:${this.selectedQueryIndex}`;
-          } else if (this.tokenizer.vocabList.length > 4) {
-            this.scene3D.selectedNodeKey = `vocab:${this.tokenizer.vocabList[4].id}`;
           }
 
           this._renderQueryTokens();
           this._renderAttentionBreakdown();
-          this._updateInspectorHUD();
+          this._updateExplanationBanner();
+
+          // Only show HUD if a node is actively selected
+          if (this.inspectedNode) {
+            this._updateInspectorHUD(this.inspectedNode);
+          }
         }
 
         _setEmbeddingMode(mode) {
@@ -2749,55 +3064,82 @@ She checked her account balance and money.</textarea>
           this.scene3D.setMode(mode);
 
           const isStatic = mode === 'static';
+          this.btnStaticMode.classList.toggle('active', isStatic);
+          this.btnContextualMode.classList.toggle('active', !isStatic);
           this.btnStaticMode.classList.toggle('active-static', isStatic);
           this.btnContextualMode.classList.toggle('active-contextual', !isStatic);
-          this.embeddingModeBadge.textContent = isStatic ? 'Static' : 'Contextual';
 
-          this._updateInspectorHUD();
+          this.embeddingModeBadge.textContent = isStatic ? 'Static (Fixed)' : 'Contextual (Context-Aware)';
+          this.embeddingModeBadge.className = `step-meta-badge ${isStatic ? 'badge-static' : 'badge-contextual'}`;
+
+          this._updateExplanationBanner();
+
+          if (this.inspectedNode) {
+            this._updateInspectorHUD(this.inspectedNode);
+          }
+        }
+
+        _updateExplanationBanner() {
+          const isStatic = this.embeddingMode === 'static';
+          const focusWord = this.currentPreset === 'apple' ? 'apple' : 'bank';
+          const clusterName = this.currentPreset === 'apple' ? 'Fruit vs. Tech' : 'River vs. Money';
+
+          if (isStatic) {
+            this.modeExplanationBanner.className = 'guided-explanation-banner static-mode';
+            this.modeExplanationBanner.innerHTML = `
+              <div class="explanation-icon">📦</div>
+              <div class="explanation-text">
+                <strong>Fixed Meaning (Word2Vec Lookup):</strong> Every word has only one frozen coordinate. Without surrounding context, <strong>"${focusWord}"</strong> is stranded halfway between clusters in 3D space.
+              </div>
+            `;
+          } else {
+            this.modeExplanationBanner.className = 'guided-explanation-banner contextual-mode';
+            this.modeExplanationBanner.innerHTML = `
+              <div class="explanation-icon">✨</div>
+              <div class="explanation-text">
+                <strong>Context-Aware (Transformer Self-Attention):</strong> The AI reads surrounding words and physically shifts <strong>"${focusWord}"</strong> in real time toward its active meaning cluster in 3D space!
+              </div>
+            `;
+          }
         }
 
         _renderVocabTable() {
           const filter = (this.vocabSearchInput.value || '').trim().toLowerCase();
           const list = this.tokenizer.vocabList;
-          const maxFreq = Math.max(1, ...list.map(v => v.freq));
 
           const filtered = list.filter(v => {
+            if (!this.showSpecialTokens && v.isSpecial) return false;
             if (!filter) return true;
-            return v.token.toLowerCase().includes(filter) || `#${v.id}`.includes(filter);
+            return v.token.toLowerCase().includes(filter) || String(v.id) === filter.replace('#', '');
           });
 
           if (filtered.length === 0) {
             this.vocabTableBody.innerHTML = `
-              <tr>
-                <td colspan="3" class="empty-notice">No vocabulary tokens match "${this._escapeHtml(filter)}"</td>
-              </tr>
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic; padding: 10px 0;">No words match "${this._escapeHtml(filter)}"</div>
             `;
             return;
           }
 
           this.vocabTableBody.innerHTML = filtered.map(item => {
-            const pct = item.isSpecial ? 0 : Math.round((item.freq / maxFreq) * 100);
-            const tokenHtml = item.isSpecial
-              ? `<span class="special-token-tag">${this._escapeHtml(item.token)}</span>`
-              : `<span>${this._escapeHtml(item.token)}</span>`;
-
-            const freqHtml = item.isSpecial
-              ? `<span style="color: var(--text-muted); font-size: 11px;">special</span>`
-              : `<div class="freq-bar-cell">
-                   <span style="min-width: 16px;">${item.freq}</span>
-                   <div class="freq-bar-bg"><div class="freq-bar-fill" style="width: ${pct}%;"></div></div>
-                 </div>`;
+            const isSpecial = item.isSpecial;
+            const isPoly = item.token === 'bank' || item.token === 'apple';
+            const isSelected = this.inspectedNode && this.inspectedNode.type === 'vocab' && this.inspectedNode.id === item.id;
 
             return `
-              <tr class="vocab-row" data-vocab-id="${item.id}" data-vocab-token="${this._escapeHtml(item.token)}">
-                <td style="color: var(--accent-cyan); font-weight: 600;">#${item.id}</td>
-                <td>${tokenHtml}</td>
-                <td>${freqHtml}</td>
-              </tr>
+              <button
+                type="button"
+                class="vocab-pill vocab-row ${isSpecial ? 'special-pill' : ''} ${isPoly ? 'poly-pill' : ''} ${isSelected ? 'active' : ''}"
+                data-vocab-id="${item.id}"
+                data-vocab-token="${this._escapeHtml(item.token)}"
+                title="Word: ${this._escapeHtml(item.token)} (ID: #${item.id}${isSpecial ? ', special token' : `, frequency: ${item.freq}`})"
+              >
+                <span>${this._escapeHtml(item.token)}</span>
+                <span class="vocab-id-tag">#${item.id}</span>
+              </button>
             `;
           }).join('');
 
-          // Allow clicking a vocabulary row to inspect it in the 3D Vector Space
+          // Clicking a word pill selects it in the 3D space and displays the HUD card
           this.vocabTableBody.querySelectorAll('.vocab-row').forEach(row => {
             row.addEventListener('click', () => {
               const id = Number(row.getAttribute('data-vocab-id'));
@@ -2810,15 +3152,18 @@ She checked her account balance and money.</textarea>
                 token,
                 vec
               };
+              this.vocabTableBody.querySelectorAll('.vocab-row').forEach(r => r.classList.remove('active'));
+              row.classList.add('active');
               this._updateInspectorHUD(this.inspectedNode);
             });
           });
         }
 
-        _renderCorpusTokens(tokenizedCorpus) {
+        _renderCorpusTokens() {
+          const tokenizedCorpus = this.tokenizer.tokenizedCorpus;
           if (tokenizedCorpus.length === 0) {
             this.corpusTokensContainer.innerHTML = `
-              <div class="empty-notice">Corpus is empty. Enter sentences in Stage 1 and click "Build Vocabulary &amp; Tokenize".</div>
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic;">No training sentences available.</div>
             `;
             return;
           }
@@ -2827,20 +3172,22 @@ She checked her account balance and money.</textarea>
             const chipsHtml = sent.tokens.map(tok => {
               const isPoly = tok.norm === 'bank' || tok.norm === 'apple';
               return `
-                <span class="token-chip ${isPoly ? 'polysemy-highlight' : ''}">
+                <div class="token-id-block ${isPoly ? 'polysemy-block' : ''}">
                   <span>${this._escapeHtml(tok.surface)}</span>
-                  <span class="tok-id">#${tok.id}</span>
-                </span>
+                  <span class="block-id">#${tok.id}</span>
+                </div>
               `;
             }).join('');
 
             return `
-              <div class="sentence-row">
-                <div class="sentence-row-label">
-                  <span>Sentence #${idx + 1}</span>
-                  <span>${sent.tokens.length} tokens</span>
+              <div class="sentence-block-card">
+                <div class="sentence-meta-row">
+                  <span style="font-weight: 600; color: var(--text-primary);">Sentence #${idx + 1}</span>
+                  <span>${sent.tokens.length} words mapped to IDs</span>
                 </div>
-                <div class="token-chips-wrap">${chipsHtml}</div>
+                <div class="sentence-chips-row">
+                  ${chipsHtml}
+                </div>
               </div>
             `;
           }).join('');
@@ -2849,7 +3196,7 @@ She checked her account balance and money.</textarea>
         _renderQueryTokens() {
           if (this.contextualSequence.length === 0) {
             this.queryTokensContainer.innerHTML = `
-              <span style="font-size: 11.5px; color: var(--text-muted);">Type a 2nd sentence above to see real-time token mapping...</span>
+              <span style="font-size: 12px; color: var(--text-muted);">Type a sentence above to see live token chips...</span>
             `;
             return;
           }
@@ -2859,16 +3206,19 @@ She checked her account balance and money.</textarea>
             const unkClass = tok.isUnk ? 'unk-chip' : '';
             const activeClass = isActive ? 'active-token' : '';
             const label = tok.isUnk ? `${tok.surface} → [UNK]` : tok.surface;
+            const title = tok.isUnk
+              ? `New word not in training dictionary → assigned #1 ([UNK])`
+              : `Click to inspect self-attention & 3D vector for "${tok.surface}"`;
 
             return `
               <button
                 type="button"
-                class="token-chip interactive-query-chip ${unkClass} ${activeClass}"
+                class="query-chip ${unkClass} ${activeClass}"
                 data-q-index="${idx}"
-                title="Click to inspect Self-Attention weights & 3D vector"
+                title="${title}"
               >
                 <span>${this._escapeHtml(label)}</span>
-                <span class="tok-id">#${tok.id}</span>
+                <span style="color: var(--text-muted); font-size: 10px;">#${tok.id}</span>
               </button>
             `;
           }).join('');
@@ -2877,10 +3227,17 @@ She checked her account balance and money.</textarea>
             btn.addEventListener('click', () => {
               this.selectedQueryIndex = Number(btn.getAttribute('data-q-index'));
               this.scene3D.selectedNodeKey = `query:${this.selectedQueryIndex}`;
-              this.inspectedNode = null;
+              const qItem = this.contextualSequence[this.selectedQueryIndex];
+              this.inspectedNode = {
+                type: 'query',
+                position: qItem.position,
+                surface: qItem.surface,
+                id: qItem.id,
+                vec: this.embeddingMode === 'contextual' ? qItem.contextualVec : qItem.staticVec
+              };
               this._renderQueryTokens();
               this._renderAttentionBreakdown();
-              this._updateInspectorHUD();
+              this._updateInspectorHUD(this.inspectedNode);
             });
           });
         }
@@ -2889,7 +3246,7 @@ She checked her account balance and money.</textarea>
           if (this.contextualSequence.length === 0) {
             this.attnSelectedTokenBadge.textContent = 'Target: None';
             this.attentionBarsContainer.innerHTML = `
-              <div class="empty-notice">No query tokens available for self-attention analysis.</div>
+              <div style="color: var(--text-muted); font-size: 12px; font-style: italic;">No query tokens available.</div>
             `;
             return;
           }
@@ -2897,7 +3254,6 @@ She checked her account balance and money.</textarea>
           const target = this.contextualSequence[this.selectedQueryIndex] || this.contextualSequence[0];
           this.attnSelectedTokenBadge.textContent = `Target: "${target.surface}" (#${target.id})`;
 
-          // Sort attention influences descending so strongest contextual drivers appear at top
           const sortedWeights = [...target.attentionWeights].sort((a, b) => b.weight - a.weight);
 
           this.attentionBarsContainer.innerHTML = sortedWeights.map(item => {
@@ -2905,12 +3261,12 @@ She checked her account balance and money.</textarea>
             const isSelf = item.targetIndex === target.position;
             const label = isSelf ? `${item.token} (self)` : item.token;
             return `
-              <div class="attn-row">
-                <span class="attn-word" title="${this._escapeHtml(label)}">${this._escapeHtml(label)}</span>
-                <div class="attn-track">
-                  <div class="attn-fill" style="width: ${Math.max(2, item.weight * 100)}%;"></div>
+              <div class="attn-bar-row">
+                <span class="attn-bar-word" title="${this._escapeHtml(label)}">${this._escapeHtml(label)}</span>
+                <div class="attn-bar-track">
+                  <div class="attn-bar-fill" style="width: ${Math.max(2, item.weight * 100)}%;"></div>
                 </div>
-                <span class="attn-pct">${pct}%</span>
+                <span class="attn-bar-pct">${pct}%</span>
               </div>
             `;
           }).join('');
@@ -2919,21 +3275,57 @@ She checked her account balance and money.</textarea>
         handleNodeSelect(hit) {
           if (hit.type === 'query') {
             this.selectedQueryIndex = hit.position;
-            this.inspectedNode = null;
+            this.inspectedNode = hit;
             this._renderQueryTokens();
             this._renderAttentionBreakdown();
-            this._updateInspectorHUD();
+            this._updateInspectorHUD(hit);
           } else {
             this.inspectedNode = hit;
             this._updateInspectorHUD(hit);
           }
         }
 
-        /**
-         * Updates the floating 3D Viewport HUD Inspector Card with exact [X, Y, Z]
-         * coordinates and Top 3 Nearest Neighbors by Cosine Similarity.
-         */
+        _getMeaningCluster(token, vec, mode) {
+          const x = vec[0];
+          const y = vec[1];
+          const t = (token || '').toLowerCase();
+
+          if (t === 'bank') {
+            if (mode === 'contextual') {
+              if (x < -0.1) return '🌿 Nature & River (Water Flow) Cluster';
+              if (x > 0.1) return '💳 Finance & Money (Banking) Cluster';
+            }
+            return '⚖️ Ambiguous Bridge (Context Needed)';
+          }
+          if (t === 'apple') {
+            if (mode === 'contextual') {
+              if (x < -0.1) return '🍎 Fresh Orchard Fruit Cluster';
+              if (x > 0.1) return '💻 Technology & Laptop Cluster';
+            }
+            return '⚖️ Ambiguous Bridge (Context Needed)';
+          }
+
+          if (x < -0.2 && y > 0.1) {
+            return '🌿 Nature, Water & Outdoors Cluster';
+          } else if (x > 0.2 && y < -0.1) {
+            return '💳 Finance, Banking & Money Cluster';
+          } else if (Math.abs(x) < 0.25 && Math.abs(y) < 0.25) {
+            return '🔗 Semantic Neutral Bridge';
+          } else if (x < 0) {
+            return '🍃 Nature & Environment Domain';
+          } else {
+            return '💼 Commerce & Technology Domain';
+          }
+        }
+
         _updateInspectorHUD(explicitNode = null) {
+          if (!explicitNode) {
+            this.inspectorHud.classList.add('hidden');
+            return;
+          }
+
+          this.inspectorHud.classList.remove('hidden');
+
           let activeToken = '[UNK]';
           let activeId = 1;
           let activeVec = [0, 0, 0];
@@ -2941,24 +3333,19 @@ She checked her account balance and money.</textarea>
           let isQuery = false;
           let queryPos = -1;
 
-          if (explicitNode && explicitNode.type === 'vocab') {
+          if (explicitNode.type === 'vocab') {
             activeToken = explicitNode.token;
             activeId = explicitNode.id;
             activeVec = this.embedder.staticVectors.get(explicitNode.token) || [0, 0, 0];
             activeModeLabel = 'Static Vocab';
-          } else if (this.contextualSequence.length > 0) {
-            const qItem = this.contextualSequence[this.selectedQueryIndex] || this.contextualSequence[0];
-            activeToken = qItem.surface;
-            activeId = qItem.id;
-            activeVec = this.embeddingMode === 'contextual' ? qItem.contextualVec : qItem.staticVec;
+          } else if (explicitNode.type === 'query') {
+            activeToken = explicitNode.surface;
+            activeId = explicitNode.id;
+            activeVec = this.embeddingMode === 'contextual'
+              ? (this.contextualSequence[explicitNode.position] ? this.contextualSequence[explicitNode.position].contextualVec : explicitNode.vec)
+              : (this.contextualSequence[explicitNode.position] ? this.contextualSequence[explicitNode.position].staticVec : explicitNode.vec);
             isQuery = true;
-            queryPos = qItem.position;
-          } else if (this.tokenizer.vocabList.length > 4) {
-            const firstWord = this.tokenizer.vocabList[4];
-            activeToken = firstWord.token;
-            activeId = firstWord.id;
-            activeVec = this.embedder.staticVectors.get(firstWord.token) || [0, 0, 0];
-            activeModeLabel = 'Static Vocab';
+            queryPos = explicitNode.position;
           }
 
           this.hudTokenName.textContent = `"${activeToken}"`;
@@ -2968,15 +3355,15 @@ She checked her account balance and money.</textarea>
             activeModeLabel === 'Contextual' ? 'hud-mode-contextual' : 'hud-mode-static'
           }`;
 
+          this.hudClusterBadge.textContent = this._getMeaningCluster(activeToken, activeVec, this.embeddingMode);
+
           this.hudCoordX.textContent = activeVec[0].toFixed(3);
           this.hudCoordY.textContent = activeVec[1].toFixed(3);
           this.hudCoordZ.textContent = activeVec[2].toFixed(3);
 
-          // Gather candidate vectors in current space to compute Top 3 Cosine Similarity
           const candidates = [];
           const seenLabels = new Set();
 
-          // Include 2nd-sentence tokens in their active mode vectors
           for (const qn of this.contextualSequence) {
             if (isQuery && qn.position === queryPos) continue;
             const vec = this.embeddingMode === 'contextual' ? qn.contextualVec : qn.staticVec;
@@ -2991,7 +3378,6 @@ She checked her account balance and money.</textarea>
             }
           }
 
-          // Include corpus vocabulary reference vectors
           for (const v of this.tokenizer.vocabList) {
             if (v.isSpecial) continue;
             if (v.token === activeToken.toLowerCase() || seenLabels.has(v.token)) continue;
@@ -3010,12 +3396,12 @@ She checked her account balance and money.</textarea>
 
           if (top3.length === 0) {
             this.hudNeighborList.innerHTML = `
-              <div class="neighbor-item" style="color: var(--text-muted);">Build corpus to compute neighbors</div>
+              <div class="neighbor-item" style="color: var(--text-muted);">Build corpus to compute closest words</div>
             `;
           } else {
             this.hudNeighborList.innerHTML = top3.map(n => `
               <div class="neighbor-item">
-                <span>${this._escapeHtml(n.label)} <span style="color: var(--text-muted);">#${n.id}</span></span>
+                <span>${this._escapeHtml(n.label)} <span style="color: var(--text-muted); font-size: 10px;">#${n.id}</span></span>
                 <span class="neighbor-sim">${n.sim.toFixed(3)}</span>
               </div>
             `).join('');
@@ -3040,7 +3426,6 @@ She checked her account balance and money.</textarea>
         }
       }
 
-      // Initialize application on DOMContentLoaded
       window.addEventListener('DOMContentLoaded', () => {
         window.llmExplorer = new PipelineApp();
       });
